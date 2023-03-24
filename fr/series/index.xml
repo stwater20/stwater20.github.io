@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Series on Sheng-Shan Chen</title>
+    <link>https://stwater20.github.io/fr/series/</link>
+    <description>Recent content in Series on Sheng-Shan Chen</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Fri, 24 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://stwater20.github.io/fr/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sheng-Shan</title>
+      <link>https://stwater20.github.io/fr/series/sheng-shan/</link>
+      <pubDate>Fri, 24 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://stwater20.github.io/fr/series/sheng-shan/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
