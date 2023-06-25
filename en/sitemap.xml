@@ -2,6 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://stwater20.github.io/posts/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://stwater20.github.io/fr/posts/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://stwater20.github.io/posts/"
+                />
+  </url><url>
+    <loc>https://stwater20.github.io/tags/sectools.tw/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://stwater20.github.io/fr/tags/sectools.tw/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://stwater20.github.io/tags/sectools.tw/"
+                />
+  </url><url>
+    <loc>https://stwater20.github.io/posts/2023/06/sectools.tw-is-under-maintenance/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://stwater20.github.io/series/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://stwater20.github.io/fr/series/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://stwater20.github.io/series/"
+                />
+  </url><url>
+    <loc>https://stwater20.github.io/series/sheng-shan/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://stwater20.github.io/fr/series/sheng-shan/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://stwater20.github.io/series/sheng-shan/"
+                />
+  </url><url>
+    <loc>https://stwater20.github.io/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://stwater20.github.io/fr/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://stwater20.github.io/"
+                />
+  </url><url>
+    <loc>https://stwater20.github.io/tags/</loc>
+    <lastmod>2023-06-25T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://stwater20.github.io/fr/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://stwater20.github.io/tags/"
+                />
+  </url><url>
     <loc>https://stwater20.github.io/about/</loc>
     <lastmod>2023-03-24T00:00:00+00:00</lastmod>
   </url><url>
@@ -18,58 +99,6 @@
                 href="https://stwater20.github.io/posts/2023/03/other-links/"
                 />
   </url><url>
-    <loc>https://stwater20.github.io/posts/</loc>
-    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://stwater20.github.io/fr/posts/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://stwater20.github.io/posts/"
-                />
-  </url><url>
-    <loc>https://stwater20.github.io/tags/sectools.tw/</loc>
-    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://stwater20.github.io/fr/tags/sectools.tw/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://stwater20.github.io/tags/sectools.tw/"
-                />
-  </url><url>
-    <loc>https://stwater20.github.io/series/</loc>
-    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://stwater20.github.io/fr/series/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://stwater20.github.io/series/"
-                />
-  </url><url>
-    <loc>https://stwater20.github.io/series/sheng-shan/</loc>
-    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://stwater20.github.io/fr/series/sheng-shan/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://stwater20.github.io/series/sheng-shan/"
-                />
-  </url><url>
     <loc>https://stwater20.github.io/tags/sheng-shan-chen/</loc>
     <lastmod>2023-03-24T00:00:00+00:00</lastmod>
     <xhtml:link
@@ -81,32 +110,6 @@
                 rel="alternate"
                 hreflang="en"
                 href="https://stwater20.github.io/tags/sheng-shan-chen/"
-                />
-  </url><url>
-    <loc>https://stwater20.github.io/</loc>
-    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://stwater20.github.io/fr/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://stwater20.github.io/"
-                />
-  </url><url>
-    <loc>https://stwater20.github.io/tags/</loc>
-    <lastmod>2023-03-24T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://stwater20.github.io/fr/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://stwater20.github.io/tags/"
                 />
   </url><url>
     <loc>https://stwater20.github.io/tags/%E9%99%B3%E5%8B%9D%E8%88%A2/</loc>
