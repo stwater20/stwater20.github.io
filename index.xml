@@ -4,42 +4,31 @@
     <title>Sheng-Shan Chen&#39;s blog</title>
     <link>https://stwater20.github.io/</link>
     <description>Recent content on Sheng-Shan Chen&#39;s blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <generator>Hugo</generator>
+    <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 25 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://stwater20.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 25 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://stwater20.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SecTools.tw is under maintenance</title>
-      <link>https://stwater20.github.io/posts/2023/06/sectools.tw-is-under-maintenance/</link>
-      <pubDate>Sun, 25 Jun 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://stwater20.github.io/posts/2023/06/sectools.tw-is-under-maintenance/</guid>
-      <description>Dear SecTools.tw User,
-We sincerely apologize for any inconvenience you are experiencing. We deeply recognize the importance and reliance you place on SecTools.tw, and we understand the distress it may cause when you&amp;rsquo;re unable to use our services.
-SecTools.tw is currently undergoing essential maintenance, a necessary action aimed at enhancing our service quality, safeguarding data security, and optimizing the user experience. We understand that such situations may be troubling for you and, for that, we are truly sorry.</description>
+      <link>https://stwater20.github.io/posts/2024/07/sectools.tw-is-under-maintenance/</link>
+      <pubDate>Thu, 25 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://stwater20.github.io/posts/2024/07/sectools.tw-is-under-maintenance/</guid>
+      <description>Dear SecTools.tw User,&#xA;We sincerely apologize for any inconvenience you are experiencing. We deeply recognize the importance and reliance you place on SecTools.tw, and we understand the distress it may cause when you&amp;rsquo;re unable to use our services.&#xA;SecTools.tw is currently undergoing essential maintenance, a necessary action aimed at enhancing our service quality, safeguarding data security, and optimizing the user experience.&#xA;Sincerely, The SecTools.tw Team</description>
     </item>
-    
     <item>
       <title>About</title>
       <link>https://stwater20.github.io/about/</link>
       <pubDate>Fri, 24 Mar 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://stwater20.github.io/about/</guid>
-      <description>陳勝舢 Sheng-Shan Chen
-國立臺北科技大學 資訊工程所 生醫資訊實驗室
-Sheng-Shan Chen is a Ph.D. student in the Department of Computer Science and Information Engineering at the National Taipei University of Technology. He won runner-up when he first participated in the National Cyber Security Competition. His main research interests are cyber threat intelligence and healthcare security.
-More detail on SecTools.tw.</description>
+      <description>陳勝舢 Sheng-Shan Chen&#xA;國立臺北科技大學 資訊工程所 生醫資訊實驗室&#xA;Sheng-Shan Chen is a Ph.D. student in the Department of Computer Science and Information Engineering at the National Taipei University of Technology. He won runner-up when he first participated in the National Cyber Security Competition. His main research interests are cyber threat intelligence and healthcare security.&#xA;More detail on SecTools.tw.</description>
     </item>
-    
     <item>
       <title>Other Links</title>
       <link>https://stwater20.github.io/posts/2023/03/other-links/</link>
       <pubDate>Fri, 24 Mar 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://stwater20.github.io/posts/2023/03/other-links/</guid>
-      <description>Sheng-Shan Chen You can see something on SecTools.tw.
-Thanks you!</description>
+      <description>Sheng-Shan Chen You can see something on SecTools.tw.&#xA;Thanks you!</description>
     </item>
-    
   </channel>
 </rss>
