@@ -21,23 +21,6 @@
         width: 100%;
         height: 700px;
       }
-
-      /* 圖例 Legend */
-      .legend {
-        background: white;
-        padding: 10px 15px;
-        line-height: 18px;
-        color: #555;
-        border-radius: 6px;
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
-      }
-      .legend i {
-        width: 20px;
-        height: 10px;
-        float: left;
-        margin-right: 10px;
-        opacity: 0.9;
-      }
     </style>
   </head>
 
@@ -57,46 +40,60 @@
         </div>
       </div>
 
-      <!-- 顏色說明區 -->
+      <!-- 圖層開關按鈕 -->
+      <div class="row justify-content-center mt-3">
+        <div class="col-auto">
+          <div class="btn-group" role="group" aria-label="Layer toggles">
+            <button
+              id="btnAdded"
+              type="button"
+              class="btn btn-outline-primary active"
+            >
+              Added
+            </button>
+            <button
+              id="btnPersisted"
+              type="button"
+              class="btn btn-outline-success active"
+            >
+              Persisted
+            </button>
+            <button
+              id="btnDisappeared"
+              type="button"
+              class="btn btn-outline-danger active"
+            >
+              Disappeared
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 說明區（可留可刪） -->
       <div class="row justify-content-center mt-4">
         <div class="col-10 col-md-6">
           <div class="card p-3 shadow-sm">
             <h5>Road Type Explanation</h5>
-            <ul style="list-style: none; padding-left: 0">
+            <ul style="list-style: none; padding-left: 0; margin-bottom: 0">
               <li>
-                <span style="color: #ff0000; font-weight: bold">■</span>
-                Disappeared – Road existed historically but not in the later
-                year.
+                <span style="color: #666666; font-weight: bold">■</span>
+                Historical DB – Base road network (historical_db.geojson).
               </li>
               <li>
-                <span style="color: #007bff; font-weight: bold">■</span> Added –
-                Road that appears in the later year but not in the earlier one.
+                <span style="color: #007bff; font-weight: bold">■</span>
+                Added – Road that appears in the later year but not in the
+                earlier one.
               </li>
               <li>
                 <span style="color: #40be7f; font-weight: bold">■</span>
                 Persisted – Road exists in both years.
               </li>
               <li>
-                <span style="color: #666666; font-weight: bold">■</span>
-                Historical All – All historical roads detected from the old
-                Melway map
-                <span style="color: #999"
-                  >(may include imperfect or noisy extraction)</span
-                >.
+                <span style="color: #ff0000; font-weight: bold">■</span>
+                Disappeared – Road existed historically but not in the later
+                year.
               </li>
             </ul>
-
-            <div class="form-check mt-2">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="toggleHistorical"
-                checked
-              />
-              <label class="form-check-label" for="toggleHistorical">
-                Show Historical (Gray) Roads
-              </label>
-            </div>
           </div>
         </div>
       </div>
@@ -105,113 +102,126 @@
     </div>
 
     <!-- JS Dependencies -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <script>
       /* ===============================
-   年份 & 區塊設定
-================================== */
+     年份 & 區塊設定
+  ================================== */
 
       const years = ["2001", "2006", "2011", "2020"];
       const blocks = ["m003", "m004", "m005", "m006", "m007"];
+
+      // 主體底圖：每個 year / block 都有 historical_db.geojson
+      const baseType = "historical_db";
+
+      // 可切換顯示的變化圖層
+      const changeTypes = ["added", "persisted", "disappeared"];
 
       const layerColors = {
         added: "#007bff",
         disappeared: "#ff0000",
         persisted: "#40be7f",
-        historical_all: "#666666",
+        historical_db: "#666666",
       };
 
       /* ===============================
-   初始化地圖
-================================== */
+     初始化地圖（不做任何自動縮放）
+  ================================== */
 
       var map = L.map("map").setView([-37.75, 145.0], 12);
+
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
       }).addTo(map);
 
+      /* ===============================
+     圖層管理
+  ================================== */
+
       let layerGroups = {
+        historical_db: [],
         added: [],
         disappeared: [],
         persisted: [],
-        historical_all: [],
       };
 
-      function clearAllLayers() {
+      // 三個 toggle 狀態（預設都開）
+      let visible = {
+        added: true,
+        persisted: true,
+        disappeared: true,
+      };
+
+      function clearYearLayers() {
+        // 切換年份時：historical_db + 三種變化圖層都清掉
         for (let type in layerGroups) {
           layerGroups[type].forEach((layer) => map.removeLayer(layer));
           layerGroups[type] = [];
         }
       }
 
-      /* ===============================
-   載入 GeoJSON
-================================== */
-
-      function loadYear(year) {
-        clearAllLayers();
-        let globalBounds = null;
-        let pending = 0;
-
-        blocks.forEach((block) => {
-          ["added", "disappeared", "persisted", "historical_all"].forEach(
-            (type) => {
-              const url = `./melway_outputs/${year}/${block}/${type}.geojson`;
-              pending++;
-
-              fetch(url)
-                .then((res) => res.json())
-                .then((data) => {
-                  let layer = L.geoJSON(data, {
-                    style: { color: layerColors[type], weight: 2 },
-                  });
-
-                  layerGroups[type].push(layer);
-                  layer.addTo(map);
-
-                  let bounds = layer.getBounds();
-                  if (bounds.isValid()) {
-                    globalBounds = globalBounds
-                      ? globalBounds.extend(bounds)
-                      : bounds;
-                  }
-                })
-                .catch(() => {})
-                .finally(() => {
-                  pending--;
-                  if (pending === 0 && globalBounds) {
-                    map.fitBounds(globalBounds, { padding: [20, 20] });
-                  }
-                });
-            }
-          );
+      function applyVisibility(type) {
+        // 只用於 added/persisted/disappeared；historical_db 永遠顯示
+        layerGroups[type].forEach((layer) => {
+          if (visible[type]) map.addLayer(layer);
+          else map.removeLayer(layer);
         });
       }
 
       /* ===============================
-   Toggle Historical Layer
-================================== */
+     載入某一年：先載 historical_db，再載變化圖層
+     ✅ 不做 fitBounds，畫面位置永遠不動
+  ================================== */
 
-      document
-        .getElementById("toggleHistorical")
-        .addEventListener("change", function () {
-          if (this.checked) {
-            layerGroups["historical_all"].forEach((layer) =>
-              map.addLayer(layer)
-            );
-          } else {
-            layerGroups["historical_all"].forEach((layer) =>
-              map.removeLayer(layer)
-            );
+      function loadYear(year) {
+        clearYearLayers();
+
+        blocks.forEach((block) => {
+          // 1) historical_db：主體，永遠顯示
+          {
+            const url = `melway_outputs/${year}/${block}/${baseType}.geojson`;
+
+            fetch(url)
+              .then((res) => res.json())
+              .then((data) => {
+                const layer = L.geoJSON(data, {
+                  style: { color: layerColors.historical_db, weight: 2 },
+                });
+                layerGroups.historical_db.push(layer);
+                layer.addTo(map);
+              })
+              .catch(() => {
+                // 缺檔就跳過
+              });
           }
+
+          // 2) added / persisted / disappeared：依 toggle 狀態顯示
+          changeTypes.forEach((type) => {
+            const url = `melway_outputs/${year}/${block}/${type}.geojson`;
+
+            fetch(url)
+              .then((res) => res.json())
+              .then((data) => {
+                const layer = L.geoJSON(data, {
+                  style: { color: layerColors[type], weight: 2 },
+                });
+
+                layerGroups[type].push(layer);
+
+                if (visible[type]) layer.addTo(map);
+              })
+              .catch(() => {
+                // 缺檔/404 就跳過，不影響其他
+              });
+          });
         });
+      }
 
       /* ===============================
-   建立年份按鈕
-================================== */
+     年份按鈕
+  ================================== */
 
       const btnGroup = document.getElementById("yearButtons");
 
@@ -233,8 +243,28 @@
       });
 
       /* ===============================
-   初始載入
-================================== */
+     三個 toggle 按鈕（added/persisted/disappeared）
+  ================================== */
+
+      function wireToggle(btnId, type) {
+        const btn = document.getElementById(btnId);
+        btn.addEventListener("click", () => {
+          visible[type] = !visible[type];
+
+          if (visible[type]) btn.classList.add("active");
+          else btn.classList.remove("active");
+
+          applyVisibility(type); // 不動視角
+        });
+      }
+
+      wireToggle("btnAdded", "added");
+      wireToggle("btnPersisted", "persisted");
+      wireToggle("btnDisappeared", "disappeared");
+
+      /* ===============================
+     初始載入
+  ================================== */
       loadYear(years[0]);
     </script>
   </body>
