@@ -19,7 +19,8 @@
     <style>
       #map {
         width: 100%;
-        height: 700px;
+        height: 60vh; /* 佔畫面 60% 高 */
+        min-height: 420px;
       }
     </style>
   </head>
@@ -44,24 +45,20 @@
       <div class="row justify-content-center mt-3">
         <div class="col-auto">
           <div class="btn-group" role="group" aria-label="Layer toggles">
-            <button
-              id="btnAdded"
-              type="button"
-              class="btn btn-outline-primary active"
-            >
+            <button id="btnAdded" type="button" class="btn btn-outline-primary">
               Added
             </button>
             <button
               id="btnPersisted"
               type="button"
-              class="btn btn-outline-success active"
+              class="btn btn-outline-success"
             >
               Remain
             </button>
             <button
               id="btnDisappeared"
               type="button"
-              class="btn btn-outline-danger active"
+              class="btn btn-outline-danger"
             >
               Disappeared
             </button>
@@ -117,7 +114,6 @@
       const baseType = "historical_db_final";
       const defaultYear = "2020";
 
-
       // 可切換顯示的變化圖層
       const changeTypes = ["added", "persisted", "disappeared"];
 
@@ -149,11 +145,14 @@
         persisted: [],
       };
 
-      // 三個 toggle 狀態（預設都開）
+      let initialBoundsGroup = L.featureGroup(); // 用來算初始範圍
+      let hasFittedBounds = false; // 只 fit 一次
+
+      // 三個 toggle 狀態（預設都關）
       let visible = {
-        added: true,
-        persisted: true,
-        disappeared: true,
+        added: false,
+        persisted: false,
+        disappeared: false,
       };
 
       function clearYearLayers() {
@@ -193,6 +192,11 @@
                 });
                 layerGroups.historical_db.push(layer);
                 layer.addTo(map);
+
+                // 🔑 只在第一次載入預設年份時，累積 bounds
+                if (!hasFittedBounds && year === defaultYear) {
+                  initialBoundsGroup.addLayer(layer);
+                }
               })
               .catch(() => {
                 // 缺檔就跳過
@@ -219,6 +223,19 @@
               });
           });
         });
+
+        // 🔒 初始視角：只做一次
+        if (!hasFittedBounds && year === defaultYear) {
+          setTimeout(() => {
+            if (initialBoundsGroup.getLayers().length > 0) {
+              map.fitBounds(initialBoundsGroup.getBounds(), {
+                padding: [20, 20],
+                maxZoom: 17,
+              });
+              hasFittedBounds = true;
+            }
+          }, 300);
+        }
       }
 
       /* ===============================
@@ -267,6 +284,7 @@
       /* ===============================
      初始載入
   ================================== */
+
       loadYear(defaultYear);
     </script>
   </body>
