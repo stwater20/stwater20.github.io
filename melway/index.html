@@ -56,7 +56,7 @@
               type="button"
               class="btn btn-outline-success active"
             >
-              Persisted
+              Remain
             </button>
             <button
               id="btnDisappeared"
@@ -114,7 +114,9 @@
       const blocks = ["m003", "m004", "m005", "m006", "m007"];
 
       // 主體底圖：每個 year / block 都有 historical_db.geojson
-      const baseType = "historical_db";
+      const baseType = "historical_db_final";
+      const defaultYear = "2020";
+
 
       // 可切換顯示的變化圖層
       const changeTypes = ["added", "persisted", "disappeared"];
@@ -228,7 +230,7 @@
       years.forEach((yr, idx) => {
         let btn = document.createElement("button");
         btn.className = "btn btn-outline-primary";
-        if (idx === 0) btn.classList.add("active");
+        if (yr === defaultYear) btn.classList.add("active");
         btn.innerText = yr;
 
         btn.addEventListener("click", function () {
@@ -265,7 +267,7 @@
       /* ===============================
      初始載入
   ================================== */
-      loadYear(years[0]);
+      loadYear(defaultYear);
     </script>
   </body>
 </html>
