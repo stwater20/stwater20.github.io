@@ -25,8 +25,11 @@
 </script>
 <script type="application/ld+json">$jsonld</script>
 
-<link rel="stylesheet" href="/main.2a064c455b0ecbd6b1481b3bf9df2441e95838691022f40a5338c2cb1244f075.css">
+<link rel="stylesheet" href="/assets/theme.css">
 <link rel="stylesheet" href="/assets/resume.css">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 <div class="container">
@@ -91,6 +94,9 @@ $sections
     </div>
   </footer>
 </div>
+<a href="#" class="to-top" aria-label="回到頂端">↑</a>
+<div class="print-mark" aria-hidden="true">stwater20.github.io</div>
+<div class="print-footer" aria-hidden="true">來源：https://stwater20.github.io · 列印於 <span id="print-date"></span></div>
 <script>
   // Mobile menu toggle (replaces the old Hugo theme bundle, which used the same .hidden class).
   (function () {
@@ -103,6 +109,20 @@ $sections
     if (mq.addEventListener) mq.addEventListener('change', sync);
     trigger.addEventListener('click', function (e) { e.stopPropagation(); if (mq.matches) menu.classList.toggle('hidden'); });
     document.addEventListener('click', function () { if (mq.matches) menu.classList.add('hidden'); });
+  })();
+  // Back-to-top button appears after scrolling past the intro.
+  (function () {
+    var btn = document.querySelector('.to-top');
+    function onScroll() { btn.classList.toggle('show', window.scrollY > 600); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    btn.addEventListener('click', function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  })();
+  // Stamp the print date into the print-only footer.
+  (function () {
+    var d = new Date();
+    document.getElementById('print-date').textContent =
+      d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   })();
 </script>
 </body>

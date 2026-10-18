@@ -56,6 +56,9 @@ def fetch(url, timeout=30):
         return resp.read()
 
 
+BARE_URL_RE = re.compile(r"https?://[^\s<>\"'，。、；]+")
+
+
 class Sanitizer(HTMLParser):
     """Keeps a small allowlist of tags/attributes and drops everything else."""
 
@@ -103,8 +106,20 @@ class Sanitizer(HTMLParser):
         self.out.append("</%s>" % tag)
 
     def handle_data(self, data):
-        if not self.skip_depth:
+        if self.skip_depth:
+            return
+        if any(self.link_stack):  # already inside a link
             self.out.append(html.escape(data, quote=False))
+            return
+        # Turn bare URLs (e.g. a DOI pasted as plain text) into links.
+        pos = 0
+        for m in BARE_URL_RE.finditer(data):
+            url = m.group(0).rstrip(".,;:)]）」")
+            self.out.append(html.escape(data[pos:m.start()], quote=False))
+            self.out.append('<a href="%s" target="_blank" rel="noopener">%s</a>' % (
+                html.escape(url, quote=True), html.escape(url, quote=False)))
+            pos = m.start() + len(url)
+        self.out.append(html.escape(data[pos:], quote=False))
 
 
 def sanitize(raw_html):

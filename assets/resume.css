@@ -73,7 +73,30 @@ a:hover { color: var(--accent); }
   .timeline li { grid-template-columns: 1fr; gap: 2px; }
 }
 
+.to-top {
+  position: fixed; right: 16px; bottom: 20px; width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; text-decoration: none;
+  background: var(--accent); color: var(--bg); font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.to-top.show { opacity: .9; pointer-events: auto; }
+.to-top:hover { color: var(--bg); opacity: 1; }
+
+.print-mark, .print-footer { display: none; }
+
 @media print {
+  .to-top { display: none !important; }
+  /* Faint diagonal watermark and a source line on every printed page. */
+  .print-mark {
+    display: block; position: fixed; top: 45%; left: 0; right: 0; text-align: center;
+    transform: rotate(-30deg); font-size: 64pt; font-weight: 700; letter-spacing: .05em;
+    color: rgba(139, 94, 52, .08) !important; pointer-events: none; z-index: 0;
+  }
+  .print-footer {
+    display: block; position: fixed; bottom: 0; left: 0; right: 0; text-align: center;
+    font-size: 8pt; color: #888 !important;
+  }
   .header, .footer, .resume-toc, .sync-note, hr { display: none !important; }
   body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
   .post.resume { max-width: none; margin: 0; padding: 0; }
