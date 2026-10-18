@@ -1,1 +1,4 @@
 User-agent: *
+Allow: /
+
+Sitemap: https://stwater20.github.io/sitemap.xml

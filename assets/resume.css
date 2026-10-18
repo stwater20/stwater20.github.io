@@ -1,0 +1,84 @@
+/* Resume layout on top of the hello-friend-ng theme (main.*.css). */
+/* Palette taken from the avatar: cream, caramel, fur brown. */
+:root {
+  --accent: #8b5e34;
+  --muted: #7d7167;
+  --rule: #e8dccb;
+  --chip: #f2e8da;
+  --bg: #fcf9f4;
+  --surface: #f6efe4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #d8b384;
+    --muted: #9c9186;
+    --rule: #3d3832;
+    --chip: #322e29;
+    --bg: #211f1c;
+    --surface: #1a1816;
+  }
+}
+
+body { background-color: var(--bg); }
+.header, .menu { background: var(--surface); }
+.logo__cursor { background: var(--accent); }
+a:hover { color: var(--accent); }
+
+.post.resume { max-width: 860px; padding: 20px 16px; box-sizing: border-box; }
+
+.resume-hero { display: flex; gap: 28px; align-items: flex-start; margin: 20px 0 10px; }
+.resume-hero .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; flex: none; margin-top: 6px; }
+.resume-hero .post-title { margin: 0 0 8px; font-size: 1.9rem; line-height: 1.25; }
+.resume-hero .intro p { margin: 0 0 10px; }
+.resume-hero .intro p:first-child { color: var(--muted); font-size: .95rem; }
+
+.resume-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 8px; }
+.resume-toc a {
+  font-size: .85rem; text-decoration: none; padding: 4px 12px; border-radius: 999px;
+  background: var(--chip); color: inherit;
+}
+.resume-toc a:hover { color: var(--accent); }
+
+.resume-section { margin-top: 40px; scroll-margin-top: 20px; }
+.resume-section h2 {
+  font-size: 1.3rem; margin: 0 0 16px; padding-bottom: 6px; border-bottom: 1px solid var(--rule);
+}
+.resume-section h2::before { content: "##"; color: var(--accent); font-weight: 400; margin-right: .4em; }
+.resume-sub { font-size: 1.05rem; margin: 26px 0 10px; }
+.resume-sub .count {
+  font-size: .75rem; font-weight: 500; padding: 1px 8px; margin-left: 6px; border-radius: 999px;
+  background: var(--chip); color: var(--muted); vertical-align: middle;
+}
+
+.timeline { list-style: none; padding: 0; margin: 0; }
+.timeline li {
+  display: grid; grid-template-columns: 9.5em 1fr; gap: 14px; padding: 7px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.timeline li:last-child { border-bottom: 0; }
+.tl-date { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .92rem; }
+.timeline.links .tl-date { white-space: normal; }
+.tl-body a, .pubs a { overflow-wrap: anywhere; }
+
+.pubs { padding-left: 1.6em; margin: 0; }
+.pubs li { margin: 0 0 12px; padding-left: 4px; line-height: 1.6; }
+.pubs li::marker { color: var(--muted); }
+.pubs strong em, .pubs em strong { color: var(--accent); font-style: normal; }
+
+.sync-note { font-size: .85rem; color: var(--muted); text-align: center; }
+
+@media (max-width: 684px) {
+  .resume-hero { flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+  .resume-hero .intro { text-align: left; }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+}
+
+@media print {
+  .header, .footer, .resume-toc, .sync-note, hr { display: none !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
+  .post.resume { max-width: none; margin: 0; padding: 0; }
+  .resume-section { margin-top: 18px; break-inside: auto; }
+  .resume-section h2 { break-after: avoid; }
+  .timeline li, .pubs li { break-inside: avoid; }
+  a { color: inherit !important; text-decoration: none !important; }
+}

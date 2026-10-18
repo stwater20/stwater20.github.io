@@ -1,7 +1,0 @@
-{
-"type": "FeatureCollection",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "gid": 254163, "osm_id": "292552485", "code": 5113.0, "fclass": "primary", "name": "Sunshine Avenue", "pixel_count": 125, "Var_line": 58.246009826660156, "Edge_contrast": 43.241378784179688, "ROI": 5530.3333333333339, "Road_detected": -1, "ROI_norm": -0.75592005863533762, "Pred": 0 }, "geometry": { "type": "LineString", "coordinates": [ [ 144.802804923067526, -37.698047174209876 ], [ 144.802823723058594, -37.697933574209358 ], [ 144.802837223046993, -37.69780307420929 ], [ 144.802859523019777, -37.697513974209528 ], [ 144.802876623009553, -37.697390574209159 ] ] } }
-]
-}

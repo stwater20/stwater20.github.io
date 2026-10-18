@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Sheng-Shan Chen">
+<meta name="description" content="$description">
+<meta name="keywords" content="Sheng-Shan Chen, 陳勝舢, Sean, CyCraft, Cyber Threat Intelligence, 資安">
+<link rel="canonical" href="https://stwater20.github.io/">
+<title>陳勝舢 Sheng-Shan Chen — Resume</title>
+
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://stwater20.github.io/">
+<meta property="og:title" content="陳勝舢 Sheng-Shan Chen">
+<meta property="og:description" content="$description">
+<meta property="og:image" content="https://stwater20.github.io/assets/avatar.jpg">
+<meta name="twitter:card" content="summary">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7L057F14ET"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7L057F14ET');
+</script>
+<script type="application/ld+json">$jsonld</script>
+
+<link rel="stylesheet" href="/main.2a064c455b0ecbd6b1481b3bf9df2441e95838691022f40a5338c2cb1244f075.css">
+<link rel="stylesheet" href="/assets/resume.css">
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <span class="header__inner">
+      <a href="/" style="text-decoration: none;">
+        <div class="logo">
+          <span class="logo__mark">&gt;</span>
+          <span class="logo__text">$$ cd /home/</span>
+          <span class="logo__cursor"></span>
+        </div>
+      </a>
+      <span class="header__right">
+        <nav class="menu">
+          <ul class="menu__inner">
+            <li><a href="#experience">學經歷</a></li>
+            <li><a href="#publications">著作</a></li>
+            <li><a href="https://sectools.tw/" target="_blank" rel="noopener">SecTools.tw</a></li>
+          </ul>
+        </nav>
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </span>
+      </span>
+    </span>
+  </header>
+
+  <div class="content">
+    <main class="post resume">
+      <section class="resume-hero">
+        <img class="avatar" src="/assets/avatar.jpg" alt="陳勝舢" width="120" height="120">
+        <div>
+          <h1 class="post-title">$name</h1>
+          <div class="post-content intro">
+$intro
+          </div>
+        </div>
+      </section>
+
+      <nav class="resume-toc" aria-label="段落">
+$toc
+      </nav>
+
+      <div class="post-content">
+$sections
+      </div>
+
+      <hr>
+      <p class="sync-note">
+        資料同步自 <a href="$source_url" target="_blank" rel="noopener">SecTools.tw</a> · 最後更新 $updated
+      </p>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__content">
+        <span>&copy; $year</span>
+        <span><a href="/">Sheng-Shan Chen</a></span>
+        <span><a href="https://github.com/stwater20" target="_blank" rel="noopener">GitHub</a></span>
+      </div>
+    </div>
+  </footer>
+</div>
+<script>
+  // Mobile menu toggle (replaces the old Hugo theme bundle, which used the same .hidden class).
+  (function () {
+    var trigger = document.querySelector('.menu-trigger');
+    var menu = document.querySelector('.menu');
+    if (!trigger || !menu) return;
+    var mq = window.matchMedia('(max-width: 684px)');
+    function sync() { menu.classList.toggle('hidden', mq.matches); }
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    trigger.addEventListener('click', function (e) { e.stopPropagation(); if (mq.matches) menu.classList.toggle('hidden'); });
+    document.addEventListener('click', function () { if (mq.matches) menu.classList.add('hidden'); });
+  })();
+</script>
+</body>
+</html>
