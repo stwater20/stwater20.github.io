@@ -83,10 +83,13 @@ a:hover { color: var(--accent); }
 .to-top.show { opacity: .9; pointer-events: auto; }
 .to-top:hover { color: var(--bg); opacity: 1; }
 
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 10000; pointer-events: none; }
+.progress__bar { height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; }
+
 .print-mark, .print-footer { display: none; }
 
 @media print {
-  .to-top { display: none !important; }
+  .to-top, .progress { display: none !important; }
   /* Faint diagonal watermark and a source line on every printed page. */
   .print-mark {
     display: block; position: fixed; top: 45%; left: 0; right: 0; text-align: center;
