@@ -28,6 +28,9 @@ DATA_FILE = ROOT / "data" / "resume.json"
 TEMPLATE_FILE = ROOT / "templates" / "index.html"
 OUTPUT_FILE = ROOT / "index.html"
 AVATAR_FILE = ROOT / "assets" / "avatar.jpg"
+# overrides/<section id>.html replaces that section's content from SecTools.tw
+# (e.g. overrides/publications.html). Delete the file once SecTools.tw is updated.
+OVERRIDES_DIR = ROOT / "overrides"
 
 SOURCE_PAGE = "https://sectools.tw/about/sean"
 API_URL = "https://sectools.tw/wp-json/wp/v2/pages?slug=sean&_fields=id,modified_gmt,title,content,link"
@@ -225,6 +228,19 @@ def parse_resume(page):
     }
 
 
+def apply_overrides(resume):
+    ids = {v: k for k, v in SECTION_IDS.items()}
+    for path in sorted(OVERRIDES_DIR.glob("*.html")):
+        title = ids.get(path.stem)
+        section = next((sec for sec in resume["sections"] if sec["title"] == title), None)
+        if section is None:
+            print("warning: override %s matches no section, ignored" % path.name, file=sys.stderr)
+            continue
+        cleaned, _ = sanitize(path.read_text(encoding="utf-8"))
+        section["items"] = parse_section_body(cleaned)
+        print("override active: %s -> %s" % (path.name, title))
+
+
 def validate(resume):
     titles = [s["title"] for s in resume["sections"]]
     missing = [t for t in REQUIRED_SECTIONS if t not in titles]
@@ -357,6 +373,7 @@ def main():
         if write_if_changed(DATA_FILE, data_text):
             print("data/resume.json updated (sha1 %s)" % hashlib.sha1(data_text.encode()).hexdigest()[:8])
 
+    apply_overrides(resume)
     if write_if_changed(OUTPUT_FILE, render(resume)):
         print("index.html updated")
     else:
