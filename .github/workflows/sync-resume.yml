@@ -37,6 +37,7 @@ jobs:
           delete-branch: true
           add-paths: |
             index.html
+            en/index.html
             data/resume.json
             assets/avatar.jpg
           commit-message: "chore: sync resume from sectools.tw"

@@ -28,9 +28,8 @@ DATA_FILE = ROOT / "data" / "resume.json"
 TEMPLATE_FILE = ROOT / "templates" / "index.html"
 OUTPUT_FILE = ROOT / "index.html"
 AVATAR_FILE = ROOT / "assets" / "avatar.jpg"
-# overrides/<section id>.html replaces that section's content from SecTools.tw
-# (e.g. overrides/publications.html). Delete the file once SecTools.tw is updated.
-OVERRIDES_DIR = ROOT / "overrides"
+EN_DATA_FILE = ROOT / "data" / "resume_en.json"
+EN_OUTPUT_FILE = ROOT / "en" / "index.html"
 
 SOURCE_PAGE = "https://sectools.tw/about/sean"
 API_URL = "https://sectools.tw/wp-json/wp/v2/pages?slug=sean&_fields=id,modified_gmt,title,content,link"
@@ -228,19 +227,6 @@ def parse_resume(page):
     }
 
 
-def apply_overrides(resume):
-    ids = {v: k for k, v in SECTION_IDS.items()}
-    for path in sorted(OVERRIDES_DIR.glob("*.html")):
-        title = ids.get(path.stem)
-        section = next((sec for sec in resume["sections"] if sec["title"] == title), None)
-        if section is None:
-            print("warning: override %s matches no section, ignored" % path.name, file=sys.stderr)
-            continue
-        cleaned, _ = sanitize(path.read_text(encoding="utf-8"))
-        section["items"] = parse_section_body(cleaned)
-        print("override active: %s -> %s" % (path.name, title))
-
-
 def validate(resume):
     titles = [s["title"] for s in resume["sections"]]
     missing = [t for t in REQUIRED_SECTIONS if t not in titles]
@@ -295,21 +281,81 @@ def render_item(it):
     return "<p>%s</p>" % it["html"]
 
 
-def render(resume):
+LANGS = {
+    "zh": {
+        "html_lang": "zh-Hant-TW",
+        "og_locale": "zh_TW",
+        "path": "",
+        "title": "陳勝舢 ｜ Sheng-Shan Chen",
+        "keywords": "陳勝舢, Sheng-Shan Chen, Sean, 資安研究員, 網路威脅情資, CyCraft, 奧義智慧",
+        "nav_experience": "學經歷",
+        "nav_publications": "著作",
+        "switch_path": "/en/",
+        "switch_lang": "en",
+        "switch_label": "English",
+        "toc_label": "段落",
+        "to_top_label": "回到頂端",
+        "print_source": "來源：",
+        "print_date_label": "列印於",
+        "sync_note": '資料同步自 <a href="%(source)s" target="_blank" rel="noopener">SecTools.tw</a> · 最後更新 %(updated)s',
+    },
+    "en": {
+        "html_lang": "en",
+        "og_locale": "en_US",
+        "path": "en/",
+        "title": "陳勝舢 ｜ Sheng-Shan Chen",
+        "keywords": "Sheng-Shan Chen, 陳勝舢, Sean Chen, cybersecurity researcher, cyber threat intelligence, CyCraft",
+        "nav_experience": "Experience",
+        "nav_publications": "Publications",
+        "switch_path": "/",
+        "switch_lang": "zh-Hant",
+        "switch_label": "中文",
+        "toc_label": "Sections",
+        "to_top_label": "Back to top",
+        "print_source": "Source: ",
+        "print_date_label": "printed",
+        "sync_note": 'Last updated %(updated)s · Publications synced from <a href="%(source)s" target="_blank" rel="noopener">SecTools.tw</a>',
+    },
+}
+
+
+def build_english(resume):
+    """English page: hand-written sections plus publications copied from the synced Chinese data."""
+    en = json.loads(EN_DATA_FILE.read_text(encoding="utf-8"))
+    zh_sections = {sec["title"]: sec for sec in resume["sections"]}
+    for sec in en["sections"]:
+        if "from_zh" in sec:
+            sec["items"] = zh_sections[sec["from_zh"]]["items"]
+    en["source"] = resume["source"]
+    # Remind (in the sync log / PR) when the Chinese page gained entries the English page lacks.
+    def count(sec):
+        return sum(len(it.get("entries", [])) for it in sec["items"])
+    zh_counts = [count(sec) for sec in resume["sections"] if sec["title"] != "著作"]
+    en_counts = [count(sec) for sec in en["sections"] if "from_zh" not in sec]
+    if zh_counts != en_counts:
+        print("warning: data/resume_en.json may be outdated (entries per section zh=%s en=%s)" % (zh_counts, en_counts))
+    return en
+
+
+def render(resume, lang):
+    cfg = LANGS[lang]
     toc = []
     body = []
     for idx, sec in enumerate(resume["sections"], 1):
-        sid = SECTION_IDS.get(sec["title"], "s%d" % idx)
+        sid = sec.get("id") or SECTION_IDS.get(sec["title"], "s%d" % idx)
         toc.append('<a href="#%s">%s</a>' % (sid, html.escape(sec["title"])))
         inner_html = "\n".join(render_item(it) for it in sec["items"])
         body.append('<section class="resume-section" id="%s">\n<h2>%s</h2>\n%s\n</section>' % (sid, html.escape(sec["title"]), inner_html))
 
-    modified = resume["source"].get("modified_gmt")
-    if modified:
-        dt = datetime.strptime(modified, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(TZ_TAIPEI)
-        updated = dt.strftime("%Y-%m-%d")
+    if lang == "en":
+        updated = resume["updated"]
     else:
-        updated = "—"
+        modified = resume["source"].get("modified_gmt")
+        if modified:
+            dt = datetime.strptime(modified, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(TZ_TAIPEI)
+            updated = dt.strftime("%Y-%m-%d")
+        else:
+            updated = "—"
 
     intro_text = strip_tags(resume["intro"][-1]) if resume["intro"] else ""
     profiles = []
@@ -317,12 +363,13 @@ def render(resume):
         for it in sec["items"]:
             if it["type"] == "links":
                 profiles += re.findall(r'href="([^"]+)"', "".join(e["html"] for e in it["entries"]))
+    page_url = SITE_URL + cfg["path"]
     person = {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Sheng-Shan Chen",
         "alternateName": ["陳勝舢", "Sean"],
-        "url": SITE_URL,
+        "url": page_url,
         "image": SITE_URL + "assets/avatar.jpg",
         "description": intro_text,
         "sameAs": profiles + [resume["source"]["url"]],
@@ -330,13 +377,17 @@ def render(resume):
 
     tpl = Template(TEMPLATE_FILE.read_text(encoding="utf-8"))
     return tpl.substitute(
+        cfg,
         name=html.escape(resume["name"].strip()),
+        name_plain=html.escape(resume["name"].strip(), quote=True),
         description=html.escape(intro_text, quote=True),
         intro="\n".join("<p>%s</p>" % p for p in resume["intro"]),
         toc="\n".join(toc),
         sections="\n".join(body),
-        updated=updated,
-        source_url=html.escape(resume["source"]["url"], quote=True),
+        sync_note=cfg["sync_note"] % {"source": html.escape(resume["source"]["url"], quote=True), "updated": updated},
+        page_url=page_url,
+        home_path="/" + cfg["path"],
+        title=html.escape(cfg["title"]),
         jsonld=json.dumps(person, ensure_ascii=False).replace("</", "<\\/"),
         year=datetime.now(TZ_TAIPEI).year,
     )
@@ -352,7 +403,7 @@ def write_if_changed(path, text):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--render", action="store_true", help="only re-render index.html from data/resume.json")
+    ap.add_argument("--render", action="store_true", help="only re-render the pages from data/*.json")
     args = ap.parse_args()
 
     if args.render:
@@ -373,11 +424,9 @@ def main():
         if write_if_changed(DATA_FILE, data_text):
             print("data/resume.json updated (sha1 %s)" % hashlib.sha1(data_text.encode()).hexdigest()[:8])
 
-    apply_overrides(resume)
-    if write_if_changed(OUTPUT_FILE, render(resume)):
-        print("index.html updated")
-    else:
-        print("no changes")
+    outputs = [(OUTPUT_FILE, render(resume, "zh")), (EN_OUTPUT_FILE, render(build_english(resume), "en"))]
+    changed = [str(path.relative_to(ROOT)) for path, text in outputs if write_if_changed(path, text)]
+    print("updated: %s" % ", ".join(changed) if changed else "no changes")
     return 0
 
 

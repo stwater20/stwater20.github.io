@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html lang="$html_lang">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Sheng-Shan Chen">
 <meta name="description" content="$description">
-<meta name="keywords" content="Sheng-Shan Chen, 陳勝舢, Sean, CyCraft, Cyber Threat Intelligence, 資安">
-<link rel="canonical" href="https://stwater20.github.io/">
-<title>陳勝舢 Sheng-Shan Chen</title>
+<meta name="keywords" content="$keywords">
+<link rel="canonical" href="$page_url">
+<link rel="alternate" hreflang="zh-Hant" href="https://stwater20.github.io/">
+<link rel="alternate" hreflang="en" href="https://stwater20.github.io/en/">
+<link rel="alternate" hreflang="x-default" href="https://stwater20.github.io/">
+<title>$title</title>
 
 <meta property="og:type" content="profile">
-<meta property="og:url" content="https://stwater20.github.io/">
-<meta property="og:title" content="陳勝舢 Sheng-Shan Chen">
+<meta property="og:url" content="$page_url">
+<meta property="og:title" content="$title">
+<meta property="og:locale" content="$og_locale">
 <meta property="og:description" content="$description">
 <meta property="og:image" content="https://stwater20.github.io/assets/avatar.jpg">
 <meta name="twitter:card" content="summary">
@@ -36,7 +40,7 @@
 <div class="container">
   <header class="header">
     <span class="header__inner">
-      <a href="/" style="text-decoration: none;">
+      <a href="$home_path" style="text-decoration: none;">
         <div class="logo">
           <span class="logo__mark">&gt;</span>
           <span class="logo__text">$$ cd /home/</span>
@@ -46,9 +50,9 @@
       <span class="header__right">
         <nav class="menu">
           <ul class="menu__inner">
-            <li><a href="#experience">學經歷</a></li>
-            <li><a href="#publications">著作</a></li>
-            <li><a href="https://sectools.tw/" target="_blank" rel="noopener">SecTools.tw</a></li>
+            <li><a href="#experience">$nav_experience</a></li>
+            <li><a href="#publications">$nav_publications</a></li>
+            <li><a href="$switch_path" hreflang="$switch_lang" lang="$switch_lang">$switch_label</a></li>
           </ul>
         </nav>
         <span class="menu-trigger">
@@ -61,7 +65,7 @@
   <div class="content">
     <main class="post resume">
       <section class="resume-hero">
-        <img class="avatar" src="/assets/avatar.jpg" alt="陳勝舢" width="120" height="120">
+        <img class="avatar" src="/assets/avatar.jpg" alt="$name_plain" width="120" height="120">
         <div>
           <h1 class="post-title">$name</h1>
           <div class="post-content intro">
@@ -70,7 +74,7 @@ $intro
         </div>
       </section>
 
-      <nav class="resume-toc" aria-label="段落">
+      <nav class="resume-toc" aria-label="$toc_label">
 $toc
       </nav>
 
@@ -80,7 +84,7 @@ $sections
 
       <hr>
       <p class="sync-note">
-        資料同步自 <a href="$source_url" target="_blank" rel="noopener">SecTools.tw</a> · 最後更新 $updated
+        $sync_note
       </p>
     </main>
   </div>
@@ -89,15 +93,15 @@ $sections
     <div class="footer__inner">
       <div class="footer__content">
         <span>&copy; $year</span>
-        <span><a href="/">Sheng-Shan Chen</a></span>
+        <span><a href="$home_path">Sheng-Shan Chen</a></span>
         <span><a href="https://github.com/stwater20" target="_blank" rel="noopener">GitHub</a></span>
       </div>
     </div>
   </footer>
 </div>
-<a href="#" class="to-top" aria-label="回到頂端">↑</a>
+<a href="#" class="to-top" aria-label="$to_top_label">↑</a>
 <div class="print-mark" aria-hidden="true">stwater20.github.io</div>
-<div class="print-footer" aria-hidden="true">來源：https://stwater20.github.io · 列印於 <span id="print-date"></span></div>
+<div class="print-footer" aria-hidden="true">${print_source}$page_url · $print_date_label <span id="print-date"></span></div>
 <script>
   // Mobile menu toggle (replaces the old Hugo theme bundle, which used the same .hidden class).
   (function () {
