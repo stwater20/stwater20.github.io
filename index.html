@@ -29,6 +29,17 @@
 </script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Sheng-Shan Chen", "alternateName": ["陳勝舢", "Sean"], "url": "https://stwater20.github.io/", "image": "https://stwater20.github.io/assets/avatar.jpg", "description": "陳勝舢為國立臺北科技大學資訊工程系博士，現任奧義智慧科技（CyCraft）資安研究員。博士期間曾獲國科會千里馬計畫補助，赴澳洲蒙納許大學軟體系統與網路安全系訪問研究。勝舢的研究專長涵蓋深度學習應用、網路安全與威脅情資分析。曾參與多項產學合作研究計畫，合作對象包括奧義智慧科技股份有限公司（CyCraft）、國家資通安全研究院（NICS）、日本情報通信研究機構（NICT）、國家衛生研究院（NHRI）、長庚醫院及萬芳醫院等。", "sameAs": ["https://www.linkedin.com/in/shansc", "https://scholar.google.com/citations?user=lgOY-SoAAAAJ", "https://orcid.org/0000-0002-5444-2029", "https://github.com/stwater20", "https://medium.com/@54sakuramiku", "https://sectools.tw/about/sean"]}</script>
 
+<script>
+  // Apply the saved light/dark choice before first paint (no flash).
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var root = document.documentElement;
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.setAttribute('data-theme-effective', dark ? 'dark' : 'light');
+  })();
+</script>
 <link rel="stylesheet" href="/assets/theme.css">
 <link rel="stylesheet" href="/assets/resume.css">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -55,6 +66,10 @@
             <li><a href="/en/" hreflang="en" lang="en">English</a></li>
           </ul>
         </nav>
+        <button type="button" class="theme-toggle" aria-label="切換淺色／深色模式" title="切換淺色／深色模式">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
         <span class="menu-trigger">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
         </span>
@@ -158,6 +173,22 @@
     if (mq.addEventListener) mq.addEventListener('change', sync);
     trigger.addEventListener('click', function (e) { e.stopPropagation(); if (mq.matches) menu.classList.toggle('hidden'); });
     document.addEventListener('click', function () { if (mq.matches) menu.classList.add('hidden'); });
+  })();
+  // Light/dark toggle: flips the current look and remembers it.
+  (function () {
+    var root = document.documentElement;
+    document.querySelector('.theme-toggle').addEventListener('click', function () {
+      var next = root.getAttribute('data-theme-effective') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      root.setAttribute('data-theme-effective', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+    // Without a saved choice, keep following the system setting if it changes.
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    function follow() {
+      if (!root.hasAttribute('data-theme')) root.setAttribute('data-theme-effective', mq.matches ? 'dark' : 'light');
+    }
+    if (mq.addEventListener) mq.addEventListener('change', follow);
   })();
   // Back-to-top button appears after scrolling past the intro.
   (function () {
