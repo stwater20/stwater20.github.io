@@ -47,7 +47,7 @@
       <button type="submit">${copy.run}</button>
     </form>
     <div class="egg-terminal__hints"></div>
-    <p class="egg-terminal__more"><a href="https://sectools.tw/" target="_blank" rel="noopener">${en ? 'Explore SecTools.tw, the cybersecurity website I created' : '逛逛我建立的資安網站 SecTools.tw'}</a></p>`;
+    <p class="egg-terminal__more"><a href="https://sectools.tw/" target="_blank" rel="noopener">SecTools.tw</a>${en ? ' is jointly maintained by Sheng-Shan Chen (Sean) and ' : ' 由陳勝舢（Sean）與 '}<a href="https://sectools.tw/about/yuki" target="_blank" rel="noopener">Yuki</a>${en ? '.' : ' 共同維護。'}</p>`;
   document.body.append(terminal);
   const output = terminal.querySelector('[role="log"]');
   const input = terminal.querySelector('input');
