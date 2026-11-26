@@ -298,6 +298,8 @@ LANGS = {
         "to_top_label": "回到頂端",
         "print_source": "來源：",
         "print_date_label": "列印於",
+        "project_label": "我的作品",
+        "project_description": "我建立的資安網站",
         "sync_note": '資料同步自 <a href="%(source)s" target="_blank" rel="noopener">SecTools.tw</a> · 最後更新 %(updated)s',
     },
     "en": {
@@ -316,6 +318,8 @@ LANGS = {
         "to_top_label": "Back to top",
         "print_source": "Source: ",
         "print_date_label": "printed",
+        "project_label": "My project",
+        "project_description": "A cybersecurity website I created",
         "sync_note": 'Last updated %(updated)s · Publications synced from <a href="%(source)s" target="_blank" rel="noopener">SecTools.tw</a>',
     },
 }
@@ -347,6 +351,13 @@ def render(resume, lang):
         sid = sec.get("id") or SECTION_IDS.get(sec["title"], "s%d" % idx)
         toc.append('<a href="#%s">%s</a>' % (sid, html.escape(sec["title"])))
         inner_html = "\n".join(render_item(it) for it in sec["items"])
+        # Keep the personal project attribution independent of upstream resume syncs.
+        if sid == "links":
+            project = render_item({"type": "links", "entries": [{
+                "label": cfg["project_label"],
+                "html": '<a href="https://sectools.tw/" target="_blank" rel="noopener">SecTools.tw</a> — ' + html.escape(cfg["project_description"]),
+            }]})
+            inner_html = project + "\n" + inner_html
         body.append('<section class="resume-section" id="%s">\n<h2>%s</h2>\n%s\n</section>' % (sid, html.escape(sec["title"]), inner_html))
 
     if lang == "en":

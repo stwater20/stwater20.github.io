@@ -47,7 +47,7 @@
       <button type="submit">${copy.run}</button>
     </form>
     <div class="egg-terminal__hints"></div>
-    <p class="egg-terminal__more"><a href="https://sectools.tw/" target="_blank" rel="noopener">${en ? 'More cybersecurity insights at SecTools.tw' : '更多資安內容，前往 SecTools.tw'}</a></p>`;
+    <p class="egg-terminal__more"><a href="https://sectools.tw/" target="_blank" rel="noopener">${en ? 'Explore SecTools.tw, the cybersecurity website I created' : '逛逛我建立的資安網站 SecTools.tw'}</a></p>`;
   document.body.append(terminal);
   const output = terminal.querySelector('[role="log"]');
   const input = terminal.querySelector('input');
