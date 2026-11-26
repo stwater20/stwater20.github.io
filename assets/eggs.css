@@ -1,0 +1,54 @@
+/* Easter eggs (see eggs.js). The terminal stays dark in both themes. */
+
+/* Shy cat avatar */
+.avatar-wrap { position: relative; flex: none; display: block; margin-top: 6px; -webkit-tap-highlight-color: transparent; }
+.resume-hero .avatar-wrap .avatar { margin-top: 0; transition: transform .45s cubic-bezier(.5, -.4, .5, 1.4), opacity .45s; }
+.avatar-wrap.wiggle .avatar { animation: egg-wiggle .3s; }
+.avatar-wrap.hiding .avatar { transform: translateY(40%) scale(.25); opacity: 0; }
+.meow-bubble {
+  position: absolute; left: 50%; top: 40%; transform: translateX(-50%);
+  white-space: nowrap; font-size: .85rem; padding: 4px 10px; border-radius: 999px;
+  background: var(--accent); color: var(--bg); box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+  animation: egg-pop .3s ease-out;
+}
+@keyframes egg-wiggle { 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+@keyframes egg-pop { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+/* Mini terminal */
+.egg-term {
+  position: fixed; left: 50%; bottom: 24px; z-index: 10001;
+  width: min(680px, calc(100vw - 32px)); max-height: min(440px, 70vh);
+  display: none; flex-direction: column; overflow: hidden;
+  transform: translateX(-50%); border-radius: 10px;
+  background: #1c1a18; color: #e8dccb; border: 1px solid #3d3832;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+  font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 0; text-align: left;
+}
+.egg-term.open { display: flex; animation: egg-rise .18s ease-out; }
+@keyframes egg-rise { from { opacity: 0; transform: translate(-50%, 12px); } }
+.egg-term__bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #262320; border-bottom: 1px solid #3d3832; }
+.egg-term__dots { width: 10px; height: 10px; border-radius: 50%; background: #e0605b; box-shadow: 16px 0 #e3b341, 32px 0 #5fb25f; margin-right: 32px; }
+.egg-term__title { flex: 1; color: #9c9186; font-size: 12px; }
+.egg-term__close { border: 0; background: transparent; color: #9c9186; font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.egg-term__close:hover { color: #e8dccb; }
+.egg-term__out { flex: 1; overflow-y: auto; padding: 10px 14px 0; }
+.egg-term__row { white-space: pre-wrap; word-break: break-word; }
+.egg-term__row.cmd { color: #d8b384; margin-top: 6px; }
+.egg-term__row.dim { color: #9c9186; }
+.egg-term__row.err { color: #e0857f; }
+.egg-term__line { display: flex; align-items: center; gap: 8px; padding: 8px 14px 12px; cursor: text; }
+.egg-term__ps { color: #d8b384; }
+.egg-term__in {
+  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: inherit;
+  font: inherit; caret-color: #d8b384; padding: 0;
+}
+
+@media (max-width: 684px) {
+  /* Keep clear of the on-screen keyboard; 16px stops iOS from zooming on focus. */
+  .egg-term { top: 72px; bottom: auto; max-height: 45vh; font-size: 13px; }
+  .egg-term__in { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar-wrap .avatar, .egg-term.open, .meow-bubble { animation: none !important; transition: none !important; }
+}
+@media print { .egg-term, .meow-bubble { display: none !important; } }

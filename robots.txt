@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# nothing interesting down here, move along
+Disallow: /0x5ea/
 
 Sitemap: https://stwater20.github.io/sitemap.xml
