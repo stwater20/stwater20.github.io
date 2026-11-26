@@ -1,0 +1,52 @@
+/* A quiet invitation, styled to match the site's terminal header. */
+.egg-trigger {
+  display: block; margin: 14px auto 0; min-width: 44px; min-height: 44px;
+  border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: var(--accent); cursor: pointer;
+  font: 1rem ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.egg-trigger:hover { background: var(--chip); border-color: var(--rule); }
+.egg-terminal {
+  width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 32px);
+  padding: 0; border: 1px solid var(--rule); border-radius: 14px;
+  background: var(--bg); color: #29231d;
+  box-shadow: 0 24px 80px #0005; text-align: left; letter-spacing: 0;
+  font: 1rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+:root[data-theme-effective="dark"] .egg-terminal { color: #e6ddd3; }
+.egg-terminal::backdrop { background: #0008; }
+.egg-terminal__header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; border-bottom: 1px solid var(--rule); background: var(--surface);
+}
+.egg-terminal__title { margin: 0; font: inherit; font-size: .875rem; }
+.egg-terminal button {
+  min-width: 44px; min-height: 44px; border: 1px solid var(--rule); border-radius: 6px;
+  padding: 4px 10px; background: var(--chip); color: inherit; font: inherit; cursor: pointer;
+}
+.egg-terminal button:hover { border-color: var(--accent); }
+.egg-terminal__output {
+  height: min(260px, 35dvh); overflow: auto; padding: 16px;
+  overscroll-behavior: contain; overflow-wrap: anywhere;
+}
+.egg-terminal__output p { margin: 0 0 12px; white-space: pre-wrap; }
+.egg-terminal__command { color: var(--accent); }
+.egg-terminal__form {
+  display: flex; align-items: center; gap: 8px; margin: 0 16px;
+  border-top: 1px solid var(--rule); padding: 12px 0;
+}
+.egg-terminal__form label { color: var(--accent); }
+.egg-terminal__form input {
+  flex: 1; min-width: 0; width: 100%; padding: 8px 4px;
+  border: 0; background: transparent; color: inherit; font: inherit;
+}
+.egg-terminal__hints { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px; }
+.egg-terminal__hints button { font-size: .875rem; }
+.egg-terminal__more { margin: 0; padding: 0 16px 16px; font-size: .875rem; }
+.egg-terminal__more a { color: var(--accent); text-underline-offset: 3px; }
+.egg-trigger:focus-visible, .egg-terminal :focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px;
+}
+@media print {
+  .egg-trigger, .egg-terminal, .egg-terminal::backdrop { display: none !important; }
+}
