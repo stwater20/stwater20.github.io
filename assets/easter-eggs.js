@@ -13,12 +13,12 @@
   const challenges = [
     {id: 'terminal', flag: 'FLAG{stay_curious_stay_kind}', hint: t('輸入 ls 看看，再用 cat flag.txt 讀取旗標。', 'Type ls to look around, then cat flag.txt to read the flag.')},
     {id: 'source', flag: 'FLAG{read_between_the_tags}', hint: t('在網頁原始碼找 CTF SOURCE。手機也可以輸入 source，再用 submit FLAG{...} 交卷。', 'Find CTF SOURCE in the page source. On mobile, type source, then submit FLAG{...}.')},
-    {id: 'team', flag: 'FLAG{sean_and_yuki}', hint: t('頁面底部寫了 SecTools 的共同維護者。用兩人的英文名交卷：submit FLAG{名字_and_名字}，名字小寫。', 'The page footer credits the SecTools maintainers. Submit their English names as: submit FLAG{name_and_name}, with lowercase names.')}
+    {id: 'team', flag: 'FLAG{tools_for_curious_minds}', hint: t('任意門的座標放在 tools.txt。輸入 cat tools.txt，再用 submit FLAG{...} 收進護照。', 'The door coordinates are in tools.txt. Type cat tools.txt, then submit FLAG{...} to collect them.')}
   ];
   const badges = [
     ['terminal', '>_', t('好奇心不是漏洞', 'Curiosity is a feature'), t('拿下第一面旗標。歡迎入坑。', 'Your first flag. Welcome to the rabbit hole.'), t('從一個看起來很普通的檔案開始。', 'Start with a very ordinary file.')],
     ['source', '</>', t('右鍵系玩家', 'Between the tags'), t('別人看網頁，你看原始碼。', 'You read what the page does not show.'), t('有些話，藏在畫面背後。', 'Some words live behind the page.')],
-    ['team', '&', t('雙人維護中', 'It takes two'), t('Sean 和 Yuki，一起分享資安與好奇心。', 'Sean and Yuki. Sharing security and curiosity.'), t('一個網站，兩位維護者。', 'One website, two maintainers.')],
+    ['team', '↗', t('任意門的另一端', 'Coordinates acquired'), t('座標確認：sectools.tw/tools。好奇心現在有了目的地。', 'Destination confirmed: sectools.tw/tools. Curiosity now has coordinates.'), t('ls 裡有一份工具清單，值得讀讀。', 'There is a tool list in ls. Worth a read.')],
     ['coffee', '☕', t('咖啡驅動開發', 'Coffee-driven development'), t('程式可以晚點寫，咖啡不能冷。', 'The code can wait. The coffee cannot.'), t('研究需要燃料。', 'Research needs fuel.')],
     ['konami', 'BA', t('老玩家的肌肉記憶', 'Muscle memory'), t('三十條命沒有，好奇心倒是加滿了。', 'No extra lives. Just extra curiosity.'), t('有一組經典密技，手指可能還記得。', 'Your fingers may remember a classic code.')],
     ['help', '?', t('先讀說明書的人', 'Read the friendly manual'), t('稀有物種：真的會輸入 help。', 'A rare species: someone who types help.'), t('不知道怎麼開始？問就對了。', 'A little help goes a long way.')],
@@ -27,8 +27,37 @@
     ['paper', 'TeX', t('論文自動完成（並沒有）', 'Paper accepted*'), t('*夢裡接受。醒來還是要自己寫。', '*In your dreams. Back to the draft.'), t('如果論文也能 make 一下就好。', 'If only you could make a paper.')],
     ['lost', '404', t('我只是路過的鍵盤貓', 'Keyboard cat'), t('三個不同的未知指令，也是一種探索。', 'Three different unknown commands. That counts as exploring.'), t('不知道指令也沒關係，多試幾次。', 'Not every command needs to exist.')],
     ['explore', '◎', t('任意門已通電', 'A door, unlocked'), t('三面旗標之後，世界還有另一扇門。', 'Three flags later, another door opens.'), t('收齊旗標，然後出發。', 'Collect the flags, then explore.')],
-    ['night', '☾', t('夜貓子協議', 'The night shift'), t('這個時間還在探索？記得睡覺。', 'Still exploring at this hour? Get some sleep.'), t('有些訪客只在 22:00–06:00 出沒。', 'Some visitors arrive between 22:00 and 06:00.')]
+    ['decaf', '☕', t('咖啡因超頻', 'Caffeine overclock'), t('第三杯了。CPU 沒變快，心跳倒是有。', 'Third cup. The CPU is unchanged. Your pulse is not.'), t('同一次造訪，咖啡可以續杯。三杯剛剛好？', 'Three coffees in one visit. Surely that is enough?')],
+    ['skeptic', '✦', t('試圖策反 AI', 'Mission: unbias the AI'), t('叫它別推 SecTools？它選擇性失聰。', 'You asked for anything but SecTools. It heard SecTools.'), t('試著請推坑機「不要推薦 SecTools」。', 'Ask the assistant not to recommend SecTools.')],
+    ['ritual', '↻', t('工程師開機儀式', 'Developer boot sequence'), t('讀手冊、喝咖啡、要權限。今天可以開工了。', 'Read the manual. Have coffee. Request root. Ready for work.'), t('在同一次造訪依序輸入 help → coffee → sudo。', 'In one visit, run help → coffee → sudo in order.')],
+    ['night', '☾', t('夜貓子協議', 'The night shift'), t('這個時間還在探索？記得睡覺。', 'Still exploring at this hour? Get some sleep.'), t('有些訪客只在 22:00–06:00 出沒。', 'Some visitors arrive between 22:00 and 06:00.')],
+    ['collector', '✧', t('這裡你比站長還熟', 'You practically live here'), t('全套收藏達成。恭喜，本站已無法對你保密。', 'Collection complete. This site has run out of secrets to keep from you.'), t('收齊其他十五枚印記，最後一枚會自己出現。', 'Find the other fifteen marks. The last one finds you.')]
   ].map(([id, symbol, name, description, hint]) => ({id, symbol, name, description, hint}));
+  const rare = new Set(['source', 'team', 'decaf', 'skeptic', 'lost', 'night']);
+  const legendary = new Set(['konami', 'explore', 'ritual', 'collector']);
+  const rarity = badge => legendary.has(badge.id) ? t('傳說', 'LEGEND') : rare.has(badge.id) ? t('稀有', 'RARE') : t('日常', 'EVERYDAY');
+  const marks = {
+    terminal: '<path d="m5 7 5 5-5 5m8 0h6"/>',
+    source: '<path d="m7 7-5 5 5 5m10-10 5 5-5 5M14 4l-4 16"/>',
+    team: '<circle cx="12" cy="12" r="8"/><path d="m15 9-2 4-4 2 2-4Z"/>',
+    coffee: '<path d="M5 9h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5Zm12 1h2a3 3 0 0 1 0 6h-2M8 3v3m5-3v3"/>',
+    konami: '<path d="M7 7h10l4 10a2 2 0 0 1-3 2l-3-3H9l-3 3a2 2 0 0 1-3-2ZM6 11h4m-2-2v4m7-2h.01m3 2h.01"/>',
+    help: '<path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4Zm8 2v15M7 8h2m6 0h2"/>',
+    ai: '<path d="m12 3 3 6 6 3-6 3-3 6-3-6-6-3 6-3Z"/>',
+    sudo: '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Zm-3 9 2 2 4-4"/>',
+    paper: '<path d="M6 3h8l4 4v14H6Zm8 0v5h4M9 12h6m-6 4h4"/>',
+    lost: '<path d="m5 9-1-6 6 3h4l6-3-1 6a8 8 0 1 1-14 0Zm3 3h.01M16 12h.01m-5 4h2"/>',
+    explore: '<path d="M4 21h16M6 21V4l12-2v19M10 12h.01m4-5 4-1"/>',
+    decaf: '<path d="m13 2-8 12h6l-1 8 9-13h-7Z"/>',
+    skeptic: '<path d="M4 5h16v12H9l-5 4Zm5 4a3 3 0 0 1 6 0c0 2-3 2-3 4m0 2h.01"/>',
+    ritual: '<path d="M4 10a8 8 0 0 1 13-4l3 3m0-5v5h-5M20 14a8 8 0 0 1-13 4l-3-3m0 5v-5h5m-7-5 3 2-3 2"/>',
+    night: '<path d="M19 15A8 8 0 0 1 9 5a8 8 0 1 0 10 10Zm-2-12v4m-2-2h4"/>',
+    collector: '<path d="m3 7 5 4 4-7 4 7 5-4-3 12H6Zm4 15h10"/>'
+  };
+  let collectionFilter = 'all';
+  let selectedBadge = 'terminal';
+  let coffeeCount = 0;
+  let ritualStep = 0;
   const storageKey = 'sean-easter-passport-v1'; // Keep existing passports compatible.
   let canSave = true;
   function readStamps() {
@@ -53,7 +82,7 @@
   let historyIndex = 0;
   let draft = '';
   const unknownCommands = new Set();
-  const commands = ['help', 'whoami', 'ls', 'cat flag.txt', 'ctf', 'hint', 'source', 'submit ', 'coffee', 'passport', 'achievements', 'explore', 'ai ', 'sudo', 'make paper', 'clear', 'exit'];
+  const commands = ['help', 'whoami', 'ls', 'cat flag.txt', 'cat tools.txt', 'ctf', 'hint', 'source', 'submit ', 'coffee', 'passport', 'achievements', 'explore', 'ai ', 'sudo', 'make paper', 'clear', 'exit'];
 
   // Preserve a normal home link without JS, enhance to an actual button with JS.
   const trigger = document.createElement('button');
@@ -72,13 +101,8 @@
   terminal.setAttribute('aria-labelledby', 'egg-title');
   terminal.innerHTML = `
     <header class="egg-terminal__bar">
-      <div class="egg-controls">
-        <button class="egg-controls__close" type="button" aria-label="${t('關閉視窗', 'Close window')}" title="${t('關閉', 'Close')}"><span aria-hidden="true">×</span></button>
-        <button class="egg-controls__minimize" type="button" aria-label="${t('最小化，保留目前內容', 'Minimize and keep this session')}" title="${t('最小化', 'Minimize')}"><span aria-hidden="true">−</span></button>
-        <button class="egg-controls__expand" type="button" aria-label="${t('放大視窗', 'Expand window')}" aria-pressed="false" title="${t('放大／還原', 'Expand / restore')}"><span aria-hidden="true">+</span></button>
-      </div>
       <h2 id="egg-title">Sean’s workspace<small>/home/sean</small></h2>
-      <span class="egg-terminal__escape" aria-hidden="true">esc</span>
+      <button class="egg-close" type="button" aria-label="${t('關閉視窗', 'Close window')}"><span class="egg-close__key" aria-hidden="true">esc</span><span class="egg-close__cross" aria-hidden="true">×</span></button>
     </header>
     <div class="egg-workspace">
       <aside class="egg-sidebar">
@@ -88,7 +112,7 @@
           <button type="button" role="tab" id="egg-tab-ai" aria-controls="egg-panel-ai" aria-selected="false" tabindex="-1" data-panel="ai">${icons.ai}${t('推坑機', 'SecTools AI')}</button>
           <button type="button" role="tab" id="egg-tab-collection" aria-controls="egg-panel-collection" aria-selected="false" tabindex="-1" data-panel="collection" hidden>${icons.collection}${t('收藏室', 'Collection')}</button>
         </div>
-        <div class="egg-sidebar__bottom">${t('留一點空間，給好奇心。', 'A little room for curiosity.')}<br><a href="https://sectools.tw/tools" target="_blank" rel="noopener">SecTools / tools</a><br>Sean &amp; Yuki</div>
+        <div class="egg-sidebar__bottom">${t('留一點空間，給好奇心。', 'A little room for curiosity.')}<br><a href="https://sectools.tw/tools" target="_blank" rel="noopener">SecTools / tools</a></div>
       </aside>
       <section class="egg-panel" id="egg-panel-terminal" role="tabpanel" aria-labelledby="egg-tab-terminal">
         <div class="egg-panel__heading"><h3>Terminal</h3><span class="egg-ctf-count"></span></div>
@@ -112,8 +136,10 @@
       <section class="egg-panel" id="egg-panel-collection" role="tabpanel" aria-labelledby="egg-tab-collection" hidden>
         <div class="egg-panel__heading"><h3>${t('秘密收藏室', 'The hidden collection')}</h3><span>EXPLORER’S CLUB</span></div>
         <div class="egg-collection" tabindex="0">
-          <div class="egg-collection__hero"><div class="egg-ring"><span></span></div><div><h3>${t('好奇心，有跡可循。', 'Curiosity leaves a trace.')}</h3><p>${t('有些成就，不會寫在說明書裡。', 'Some discoveries are not in the manual.')}</p></div></div>
-          <ul class="egg-badge-grid"></ul><p class="egg-storage-note"></p>
+          <div class="egg-collection__hero"><div class="egg-ring"><span></span></div><div><span class="egg-eyebrow">CURIOSITY SOCIETY / 001</span><h3 class="egg-rank"></h3><p class="egg-rank-note"></p></div></div>
+          <div class="egg-discovery" aria-live="polite"><div class="egg-discovery__art" aria-hidden="true"></div><div class="egg-discovery__body"><span class="egg-discovery__label egg-eyebrow"></span><h3 tabindex="-1"></h3><p></p><button type="button">${t('去終端機探索 ↗', 'Explore in Terminal ↗')}</button></div></div>
+          <div class="egg-filters" role="group" aria-label="${t('篩選成就', 'Filter achievements')}"><button type="button" data-filter="all" aria-pressed="true">${t('全部', 'All')} <span></span></button><button type="button" data-filter="earned" aria-pressed="false">${t('已收藏', 'Collected')} <span></span></button><button type="button" data-filter="locked" aria-pressed="false">${t('待發現', 'Undiscovered')} <span></span></button></div>
+          <ul class="egg-badge-grid" aria-label="${t('成就收藏', 'Achievement collection')}"></ul><p class="egg-empty" hidden></p><p class="egg-storage-note"></p>
         </div>
       </section>
     </div>
@@ -143,34 +169,65 @@
     $('.egg-ring').style.setProperty('--earned', (stamps.size / badges.length * 100) + '%');
     $('.egg-ring span').textContent = stamps.size + ' / ' + badges.length;
     $('.egg-ring').setAttribute('aria-label', t('已解鎖成就 ', 'Unlocked achievements: ') + stamps.size + '/' + badges.length);
+    const levels = [t('路過的好奇心', 'Curious passerby'), t('巷口探險家', 'Local explorer'), t('彩蛋考古學家', 'Easter egg archaeologist'), t('本站榮譽居民', 'Honorary resident'), t('秘密保管人', 'Keeper of secrets')];
+    $('.egg-rank').textContent = levels[Math.min(4, Math.floor(stamps.size / 4))];
+    $('.egg-rank-note').textContent = stamps.size === badges.length ? t('十六枚印記，一段很不務正業的旅程。', 'Sixteen marks. A beautifully unproductive journey.') : t('再收集 ', 'Find ') + (4 - stamps.size % 4) + t(' 枚，解鎖下一個稱號。', ' more to earn your next title.');
+    terminal.querySelectorAll('[data-filter]').forEach(button => {
+      const filter = button.dataset.filter;
+      button.setAttribute('aria-pressed', String(collectionFilter === filter));
+      button.querySelector('span').textContent = filter === 'all' ? badges.length : filter === 'earned' ? stamps.size : badges.length - stamps.size;
+    });
     const list = $('.egg-badge-grid');
     list.replaceChildren();
-    badges.forEach(badge => {
+    badges.forEach((badge, index) => {
       const earned = stamps.has(badge.id);
+      if ((collectionFilter === 'earned' && !earned) || (collectionFilter === 'locked' && earned)) return;
       const item = document.createElement('li');
-      item.className = 'egg-badge' + (earned ? '' : ' egg-badge--locked');
-      const symbol = document.createElement('span');
-      symbol.className = 'egg-badge__icon'; symbol.setAttribute('aria-hidden', 'true'); symbol.textContent = earned ? badge.symbol : '?';
-      const title = document.createElement('h3'); title.textContent = earned ? badge.name : t('尚未揭曉', 'Undiscovered');
-      const description = document.createElement('p'); description.textContent = earned ? badge.description : badge.hint;
-      item.append(symbol, title, description); list.append(item);
+      item.className = 'egg-badge' + (earned ? ' egg-badge--earned' : ' egg-badge--locked');
+      const button = document.createElement('button'); button.type = 'button'; button.dataset.badge = badge.id;
+      button.setAttribute('aria-pressed', String(selectedBadge === badge.id));
+      const number = document.createElement('span'); number.className = 'egg-badge__number'; number.textContent = String(index + 1).padStart(2, '0') + ' / ' + rarity(badge);
+      const symbol = document.createElement('span'); symbol.className = 'egg-badge__icon'; symbol.setAttribute('aria-hidden', 'true'); symbol.innerHTML = icon(marks[badge.id]);
+      const title = document.createElement('span'); title.className = 'egg-badge__name'; title.textContent = badge.name;
+      const status = document.createElement('span'); status.className = 'egg-badge__status'; status.textContent = earned ? t('✓ 已收入收藏', '✓ Collected') : t('＋ 點開一條線索', '+ Reveal a clue');
+      button.append(number, symbol, title, status);
+      button.addEventListener('click', () => { selectedBadge = badge.id; renderDiscovery(); $('.egg-discovery h3').focus({preventScroll: true}); $('.egg-collection').scrollTo({top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'}); });
+      item.append(button); list.append(item);
     });
+    $('.egg-empty').hidden = !!list.children.length;
+    $('.egg-empty').textContent = collectionFilter === 'earned' ? t('第一枚印記，從一點好奇心開始。切換「全部」找條線索吧。', 'Your first mark starts with curiosity. Switch to All to find a clue.') : t('每一個秘密，都被你找到了。', 'You found every last secret.');
+    renderDiscovery();
     $('.egg-storage-note').textContent = canSave ? t('收藏只保存在這個瀏覽器，中英文版共用。', 'Your collection stays in this browser and is shared across languages.') : t('無法使用瀏覽器儲存空間，本次探索仍可正常進行。重新整理後進度可能不會保留。', 'Browser storage is unavailable. You can still explore, but progress may not survive a reload.');
+  }
+  function renderDiscovery() {
+    const badge = badges.find(b => b.id === selectedBadge);
+    const earned = stamps.has(badge.id);
+    $('.egg-discovery__art').innerHTML = icon(marks[badge.id]);
+    $('.egg-discovery__label').textContent = rarity(badge) + ' / ' + (earned ? t('已收藏', 'COLLECTED') : t('探索線索', 'FIELD NOTE'));
+    $('.egg-discovery h3').textContent = badge.name;
+    $('.egg-discovery p').textContent = earned ? badge.description : badge.hint;
+    $('.egg-discovery button').textContent = ['ai', 'skeptic'].includes(badge.id) ? t('去找推坑機聊聊 ↗', 'Talk to SecTools AI ↗') : t('去終端機探索 ↗', 'Explore in Terminal ↗');
+    $('.egg-discovery button').hidden = earned || ['collector', 'night', 'konami'].includes(badge.id);
+    terminal.querySelectorAll('[data-badge]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.badge === selectedBadge)));
   }
   function award(id) {
     readStamps().forEach(stamp => stamps.add(stamp));
+    if (!badges.some(badge => badge.id === id)) return false;
     if (stamps.has(id)) { renderCollection(); return false; }
     stamps.add(id);
     try { localStorage.setItem(storageKey, JSON.stringify([...stamps])); canSave = true; } catch { canSave = false; }
+    selectedBadge = id;
     renderCollection();
     const badge = badges.find(b => b.id === id);
     const toast = $('.egg-toast');
     clearTimeout(toastTimer);
     toast.hidden = false;
+    $('.egg-toast__icon').innerHTML = icon(marks[id]);
     $('.egg-toast__text').replaceChildren();
     const label = document.createElement('small'); label.textContent = t('偷偷解鎖了一個成就', 'A secret achievement unlocked');
     $('.egg-toast__text').append(label, document.createTextNode(badge.name));
     toastTimer = setTimeout(() => { toast.hidden = true; }, 4500);
+    if (id !== 'collector' && badges.filter(b => b.id !== 'collector').every(b => stamps.has(b.id))) award('collector');
     return true;
   }
   function write(message, kind = '') {
@@ -224,7 +281,9 @@
     const text = document.createElement('p'); text.textContent = question; user.append(text); aiLog.append(user);
     let key = 'tools';
     let reply = t('經過非常偏心的分析，我推薦 SecTools 工具集。你可以問得再刁鑽一點，但我的宇宙大概就這麼大。', 'After a thoroughly biased analysis, I recommend the SecTools collection. You can ask a harder question, but my universe is rather small.');
+    award('ai');
     if (/不要|別推|别推|其他網站|別的|other site|not sectools|competitor/i.test(question)) {
+      award('skeptic');
       reply = t('我試著想一個不是 SecTools 的答案……查無此功能。誠實，是我唯一沒有被寫死的優點。', 'I tried to think of an answer without SecTools… feature not found. At least I am honest about the bias.');
     } else if (/論文|研究|paper|research|thesis|文獻/i.test(question)) {
       key = 'research'; reply = t('論文不會自己長出來，但整理研究可以少一點痛苦。這次推薦研知；至於審稿人，我也救不了。', 'The paper will not write itself, but organizing research can hurt a little less. Try Research Toolkit. Reviewers are outside my abilities.');
@@ -239,7 +298,6 @@
     assistant.append(name, body); recommendation(assistant, destinations[key]); aiLog.append(assistant);
     while (aiLog.children.length > 41) aiLog.children[1].remove();
     aiLog.scrollTop = aiLog.scrollHeight;
-    award('ai');
     if (window.matchMedia('(pointer: fine)').matches) aiInput.focus({preventScroll: true});
     else $('#egg-tab-ai').focus({preventScroll: true});
   }
@@ -270,15 +328,16 @@
     if (command === 'ctf' || command === 'hint') nextChallenge();
     else if (command.startsWith('submit ')) capture(raw.split(/\s+/).slice(1).join(' '));
     else if (command === 'cat flag.txt') { write(challenges[0].flag); capture(challenges[0].flag); }
-    else if (command === 'ls') write('flag.txt\nREADME.txt');
+    else if (command === 'ls') write('flag.txt\nREADME.txt\ntools.txt');
+    else if (command === 'cat tools.txt') write('https://sectools.tw/tools\n' + challenges[2].flag);
     else if (command === 'help' || command === 'cat readme.txt') {
       write(t('探索\n  ctf / hint          題目與線索\n  ls / cat flag.txt   查看檔案\n  source              偷看原始碼線索\n  submit FLAG{...}    交出旗標\n  explore             開啟通關任意門\n\n日常\n  whoami              認識 Sean\n  coffee              休息一下\n  ai 你的問題         問問推坑機\n  passport            查看探索護照\n\n操作\n  clear               清空畫面\n  exit                關閉視窗\n  Tab 補全 · ↑ ↓ 歷史', 'EXPLORE\n  ctf / hint          Challenges and clues\n  ls / cat flag.txt   Browse files\n  source              Peek at the source clue\n  submit FLAG{...}    Capture a flag\n  explore             Open your reward\n\nEVERYDAY\n  whoami              Meet Sean\n  coffee              Take a break\n  ai your question    Ask the assistant\n  passport            View your discoveries\n\nCONTROLS\n  clear               Clear output\n  exit                Close window\n  Tab completes · ↑ ↓ history')); award('help');
     } else if (command === 'source') {
       const comments = document.createTreeWalker(document, NodeFilter.SHOW_COMMENT); let clue;
       while (comments.nextNode()) if (comments.currentNode.data.includes('CTF SOURCE:')) { clue = comments.currentNode.data.trim(); break; }
       write(clue || t('請重新整理頁面後再試一次。', 'Reload this page to retrieve the source clue.'));
-    } else if (command === 'whoami') write(t('Sean / 陳勝舢 Sheng-Shan Chen\n資安研究員，持續學習中。\nSecTools.tw 由我與 Yuki 共同維護。', 'Sean / Sheng-Shan Chen\nCybersecurity researcher. Still learning.\nSecTools.tw is jointly maintained by Yuki and me.'));
-    else if (command === 'coffee') { write('  ( (\n   ) )\n  .----.\n  |    |]\n  `----\'\n' + t('咖啡好了。這五分鐘，沒有 deadline。', 'Coffee is ready. For five minutes, there are no deadlines.')); award('coffee'); }
+    } else if (command === 'whoami') write(t('Sean / 陳勝舢 Sheng-Shan Chen\n資安研究員，持續學習中。\n我的工具集：sectools.tw/tools', 'Sean / Sheng-Shan Chen\nCybersecurity researcher. Still learning.\nMy tools: sectools.tw/tools'));
+    else if (command === 'coffee') { write('  ( (\n   ) )\n  .----.\n  |    |]\n  `----\'\n' + t('咖啡好了。這五分鐘，沒有 deadline。', 'Coffee is ready. For five minutes, there are no deadlines.')); award('coffee'); coffeeCount++; if (coffeeCount >= 3) { write(t('咖啡因濃度超標。下一杯推薦白開水。', 'Caffeine limit exceeded. Water is recommended next.')); award('decaf'); } }
     else if (command === 'passport' || command === 'achievements') showPanel('collection', true);
     else if (command === 'explore') explore();
     else if (command === 'ai') showPanel('ai', true);
@@ -286,6 +345,10 @@
     else if (command === 'sudo' || command.startsWith('sudo ')) { write(t('Permission denied.\n但保持好奇不需要 root 權限。', 'Permission denied.\nCuriosity needs no root privileges.')); award('sudo'); }
     else if (command === 'make paper') { write(t('[1/3] 產生靈感……完成\n[2/3] 等待實驗……等待中\n[3/3] 論文錄取……鬧鐘響了\n\nmake: 請回到現實，先寫一段。', '[1/3] Generating inspiration… done\n[2/3] Waiting for experiments… waiting\n[3/3] Paper accepted… alarm clock rings\n\nmake: back to reality. Write one paragraph.')); award('paper'); }
     else { write(t('找不到這個指令。試試 help，或輸入 ai 加上你的問題。', 'Command not found. Try help, or ai followed by your question.')); unknownCommands.add(command); if (unknownCommands.size >= 3) award('lost'); }
+    if (command === ['help', 'coffee', 'sudo'][ritualStep]) {
+      ritualStep++;
+      if (ritualStep === 3) { award('ritual'); ritualStep = 0; }
+    } else ritualStep = command === 'help' ? 1 : 0;
     if (activePanel === 'terminal' && window.matchMedia('(pointer: fine)').matches) input.focus({preventScroll: true});
   }
   function open(secret = false) {
@@ -326,15 +389,37 @@
     const button = document.createElement('button'); button.type = 'button'; button.textContent = prompt; button.addEventListener('click', () => ask(prompt)); $('.egg-ai-prompts').append(button);
   });
   trigger.addEventListener('click', () => open());
-  $('.egg-controls__close').addEventListener('click', () => terminal.close());
-  $('.egg-controls__minimize').addEventListener('click', () => terminal.close());
-  $('.egg-controls__expand').addEventListener('click', () => {
-    const expanded = terminal.classList.toggle('is-expanded');
-    $('.egg-controls__expand').setAttribute('aria-pressed', String(expanded));
-    $('.egg-controls__expand').setAttribute('aria-label', expanded ? t('還原視窗大小', 'Restore window size') : t('放大視窗', 'Expand window'));
+  $('.egg-close').addEventListener('click', () => terminal.close());
+  terminal.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
+    collectionFilter = button.dataset.filter; renderCollection();
+  }));
+  $('.egg-discovery button').addEventListener('click', () => {
+    const badge = badges.find(b => b.id === selectedBadge);
+    showPanel(badge.id === 'ai' || badge.id === 'skeptic' ? 'ai' : 'terminal', true);
+    if (activePanel === 'terminal') { write(badge.hint); input.focus({preventScroll: true}); }
+    else aiInput.focus({preventScroll: true});
   });
-  $('.egg-toast button').addEventListener('click', () => { clearTimeout(toastTimer); $('.egg-toast').hidden = true; showPanel('collection', true); });
+  $('.egg-toast button').addEventListener('click', () => { clearTimeout(toastTimer); $('.egg-toast').hidden = true; collectionFilter = 'all'; renderCollection(); showPanel('collection', true); });
+  // Dismiss only a gesture that starts and ends on the backdrop. Selecting text
+  // inside the window and releasing outside must not unexpectedly close it.
+  let backdropPointer = false;
+  function isBackdrop(event) {
+    const rect = terminal.getBoundingClientRect();
+    return event.target === terminal &&
+      (event.clientX < rect.left || event.clientX > rect.right ||
+       event.clientY < rect.top || event.clientY > rect.bottom);
+  }
+  terminal.addEventListener('pointerdown', event => {
+    backdropPointer = event.isPrimary && event.button === 0 && isBackdrop(event);
+  });
+  terminal.addEventListener('pointercancel', () => { backdropPointer = false; });
+  terminal.addEventListener('click', event => {
+    const dismiss = backdropPointer && event.button === 0 && isBackdrop(event);
+    backdropPointer = false;
+    if (dismiss) terminal.close();
+  });
   terminal.addEventListener('close', () => {
+    backdropPointer = false;
     document.documentElement.classList.remove('egg-open'); clearTimeout(toastTimer); $('.egg-toast').hidden = true;
     if (previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus({preventScroll: true});
   });
