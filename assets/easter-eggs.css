@@ -12,7 +12,7 @@ html.egg-open { overflow: hidden; }
   max-width: none; max-height: none; margin: auto; padding: 0;
   border: 1px solid #ffffffc7; border-radius: 24px; overflow: hidden;
   background: var(--glass); color: var(--ink); color-scheme: light;
-  box-shadow: 0 36px 100px #35211040, 0 8px 28px #35211020, inset 0 1px 0 #fff;
+  box-shadow: 0 36px 100px #35211040, 0 8px 28px #35211018, inset 0 1px 0 #fff, inset 0 -1px 0 #ffffff40;
   font: 1rem/1.55 -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
   letter-spacing: -.015em; text-align: left;
 }
@@ -27,11 +27,11 @@ html.egg-open { overflow: hidden; }
 }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .egg-terminal {
-    background: radial-gradient(ellipse at 5% 0, #f4d3aa70, transparent 55%), radial-gradient(ellipse at 100% 100%, #f5e5ce40, transparent 55%), #fcf9f4dc;
+    background: radial-gradient(ellipse at 5% 0, #f4d3aa70, transparent 55%), radial-gradient(ellipse at 100% 100%, #f5e5ce40, transparent 55%), #fcf9f4cf;
     backdrop-filter: blur(36px) saturate(1.45); -webkit-backdrop-filter: blur(36px) saturate(1.45);
   }
   :root[data-theme-effective="dark"] .egg-terminal {
-    background: radial-gradient(ellipse at 5% 0, #ac713329, transparent 55%), radial-gradient(ellipse at 100% 100%, #b58b5720, transparent 55%), #211b16e8;
+    background: radial-gradient(ellipse at 5% 0, #ac713329, transparent 55%), radial-gradient(ellipse at 100% 100%, #b58b5720, transparent 55%), #211b16d9;
   }
 }
 .egg-terminal * { box-sizing: border-box; }
@@ -46,12 +46,11 @@ html.egg-open { overflow: hidden; }
 .egg-terminal__bar { display: flex; align-items: center; justify-content: space-between; min-height: 68px; padding: 10px 20px 10px 26px; border-bottom: 1px solid var(--line); flex: none; background: linear-gradient(#ffffff24, #ffffff04); }
 .egg-terminal__bar h2 { font-size: .875rem; font-weight: 600; }
 .egg-terminal__bar small { display: block; color: var(--secondary); font: .75rem/1.5 var(--terminal-mono); font-weight: 400; }
-.egg-close { display: flex; align-items: center; justify-content: center; gap: 12px; min-width: 76px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: transparent; }
-.egg-close:hover { background: var(--panel); border-color: var(--terminal-accent); }
-.egg-close__key { font: .75rem var(--terminal-mono); color: var(--secondary); }
-.egg-close__cross { font: 24px/1 sans-serif; }
+.egg-close { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--panel); box-shadow: inset 0 1px 0 #ffffff38, 0 2px 6px #38220e08; }
+.egg-close svg { display: block; width: 18px; height: 18px; stroke-width: 1.8; }
+.egg-close:hover { background: var(--hover); }
 .egg-workspace { display: grid; grid-template-columns: 190px minmax(0, 1fr); flex: 1; min-height: 0; }
-.egg-sidebar { padding: 24px 12px 16px; display: flex; flex-direction: column; gap: 20px; border-right: 1px solid var(--line); background: #a4773e08; }
+.egg-sidebar { padding: 24px 12px 16px; display: flex; flex-direction: column; gap: 20px; border-right: 1px solid var(--line); background: linear-gradient(150deg, #ffffff0c, #a4773e0a); }
 .egg-sidebar__caption { padding: 0 12px; font-size: .75rem; font-weight: 600; letter-spacing: .09em; color: var(--secondary); }
 .egg-tabs { display: flex; flex-direction: column; gap: 6px; }
 .egg-tabs button { display: flex; align-items: center; gap: 11px; min-height: 46px; padding: 10px 12px; border: 1px solid transparent; border-radius: 10px; text-align: left; background: transparent; font-size: .875rem; font-weight: 500; white-space: nowrap; }
@@ -151,8 +150,6 @@ html.egg-open { overflow: hidden; }
 @media (max-width: 700px) {
   .egg-terminal { width: calc(100vw - 24px); height: min(760px, calc(100dvh - 24px)); border-radius: 20px; }
   .egg-terminal__bar { min-height: 58px; padding: 4px 12px 4px 18px; }
-  .egg-close { min-width: 44px; }
-  .egg-close__key { display: none; }
   .egg-workspace { display: flex; flex-direction: column; }
   .egg-sidebar { flex: none; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); }
   .egg-sidebar__caption, .egg-sidebar__bottom { display: none; }
@@ -303,4 +300,15 @@ html.egg-open { overflow: hidden; }
   .egg-ai-intro h3 br { display: none; }
   .egg-ai-topic-grid { margin-top: 16px; }
   .egg-ai-topic-grid button { min-height: 70px; padding: 10px 14px; }
+}
+/* Mobile navigation and content wrap vertically, never into a sideways rail. */
+@media (max-width:700px) {
+  .egg-tabs { flex-wrap: wrap; }
+  .egg-tabs button { white-space: normal; overflow-wrap: anywhere; }
+  .egg-welcome__cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .egg-collection__hero > div:last-child { min-width: 0; overflow-wrap: anywhere; }
+  .egg-panel__heading { flex-wrap: wrap; }
+  .egg-ai-toolbar, .egg-ai-actions, .egg-ai-choices, .egg-shortcuts, .egg-filters { flex-wrap: wrap; }
+  .egg-panel p, .egg-panel h3, .egg-panel h4 { overflow-wrap: anywhere; }
+  .egg-terminal__output, .egg-ai-log, .egg-collection { overflow-x: hidden; }
 }

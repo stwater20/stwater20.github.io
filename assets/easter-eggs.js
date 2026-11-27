@@ -107,7 +107,7 @@
   terminal.innerHTML = `
     <header class="egg-terminal__bar">
       <h2 id="egg-title">Sean’s workspace<small>/home/sean</small></h2>
-      <button class="egg-close" type="button" aria-label="${t('關閉視窗', 'Close window')}"><span class="egg-close__key" aria-hidden="true">esc</span><span class="egg-close__cross" aria-hidden="true">×</span></button>
+      <button class="egg-close" type="button" aria-label="${t('關閉視窗', 'Close window')}" title="${t('關閉視窗（Esc）', 'Close window (Esc)')}">${icon('<path d="m6 6 12 12M18 6 6 18"/>')}</button>
     </header>
     <div class="egg-workspace">
       <aside class="egg-sidebar">
@@ -117,7 +117,7 @@
           <button type="button" role="tab" id="egg-tab-ai" aria-controls="egg-panel-ai" aria-selected="false" tabindex="-1" data-panel="ai">${icons.ai}${t('推坑機', 'SecTools AI')}</button>
           <button type="button" role="tab" id="egg-tab-collection" aria-controls="egg-panel-collection" aria-selected="false" tabindex="-1" data-panel="collection" hidden>${icons.collection}${t('收藏室', 'Collection')}</button>
         </div>
-        <div class="egg-sidebar__bottom">${t('留一點空間，給好奇心。', 'A little room for curiosity.')}<br><a href="https://sectools.tw/tools" target="_blank" rel="noopener">SecTools / tools</a></div>
+        <div class="egg-sidebar__bottom">${t('留一點空間，給好奇心。', 'A little room for curiosity.')}<br><a href="https://sectools.tw/" target="_blank" rel="noopener">sectools.tw</a></div>
       </aside>
       <section class="egg-panel" id="egg-panel-terminal" role="tabpanel" aria-labelledby="egg-tab-terminal">
         <div class="egg-panel__heading"><h3>Terminal</h3><span class="egg-ctf-count"></span></div>
