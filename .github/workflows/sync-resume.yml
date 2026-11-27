@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  pages: write
 
 concurrency:
   group: sync-resume
@@ -14,9 +14,13 @@ concurrency:
 
 jobs:
   sync:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
@@ -27,21 +31,55 @@ jobs:
       - name: Fetch and render
         run: python3 scripts/sync_resume.py
 
-      # Changes go to a PR so the diff can be reviewed before the site updates.
-      # Requires: Settings → Actions → General → "Allow GitHub Actions to create
-      # and approve pull requests".
-      - name: Open pull request if changed
-        uses: peter-evans/create-pull-request@v7
-        with:
-          branch: sync/resume
-          delete-branch: true
-          add-paths: |
-            index.html
-            en/index.html
-            data/resume.json
-            assets/avatar.jpg
-          commit-message: "chore: sync resume from sectools.tw"
-          title: "Sync resume from sectools.tw"
-          body: |
-            Automated sync from https://sectools.tw/about/sean.
-            Check the diff of `data/resume.json`, then merge to publish.
+      - name: Check rendered contact links
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Commit updates directly to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add index.html en/index.html data/resume.json assets/avatar.jpg
+          if git diff --cached --quiet; then
+            echo "Source is unchanged; verifying publication of the current version." >> "$GITHUB_STEP_SUMMARY"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: sync resume from sectools.tw"
+            # A concurrent update to main fails safely; never overwrite it.
+            git push origin HEAD:main
+            echo "Synced SecTools content directly to main." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # GITHUB_TOKEN pushes do not trigger the normal Pages build. Request one
+      # explicitly, including on unchanged reruns so failed deploys can recover.
+      - name: Publish and wait for GitHub Pages
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          endpoint="repos/$GITHUB_REPOSITORY/pages/builds"
+          expected_commit=$(git rev-parse HEAD)
+          previous_build=$(gh api "$endpoint/latest" --jq '.url')
+          gh api --method POST "$endpoint" > /dev/null
+          for attempt in {1..120}; do
+            build=$(gh api "$endpoint/latest")
+            build_url=$(jq -r '.url' <<< "$build")
+            commit=$(jq -r '.commit' <<< "$build")
+            status=$(jq -r '.status' <<< "$build")
+            if [[ "$build_url" != "$previous_build" && "$commit" == "$expected_commit" ]]; then
+              case "$status" in
+                built)
+                  echo "Published commit $expected_commit successfully." >> "$GITHUB_STEP_SUMMARY"
+                  exit 0
+                  ;;
+                errored)
+                  jq -r '.error.message' <<< "$build" >&2
+                  exit 1
+                  ;;
+              esac
+            fi
+            sleep 5
+          done
+          echo "Timed out waiting for Pages to publish $expected_commit. Check the Pages build before rerunning Sync." >&2
+          exit 1
