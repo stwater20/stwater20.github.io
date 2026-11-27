@@ -130,69 +130,6 @@ a:hover { color: var(--accent); }
   a { color: inherit !important; text-decoration: none !important; }
 }
 
-/* Material-only refresh: keep the existing typography, spacing and geometry. */
-@media screen {
-  :root {
-    --page-glass: #fffdf8bd;
-    --page-glass-solid: #fcf9f4;
-    --page-glass-edge: #ffffffdb;
-    --page-glass-shadow: #7040180a;
-    --page-glow: #d6a76d2b;
-    --page-glow-soft: #e9cda52b;
-    --page-control: #ffffff60;
-  }
-  :root[data-theme-effective="dark"] {
-    --page-glass: #26221ec2;
-    --page-glass-solid: #211f1c;
-    --page-glass-edge: #e8c9a31f;
-    --page-glass-shadow: #00000026;
-    --page-glow: #a7743424;
-    --page-glow-soft: #bd936416;
-    --page-control: #ffffff08;
-  }
-  body {
-    background-image: radial-gradient(ellipse 1000px 700px at 0 0, var(--page-glow), transparent 70%), radial-gradient(ellipse 800px 650px at 100% 70vh, var(--page-glow-soft), transparent 75%);
-    background-attachment: fixed;
-  }
-  .header {
-    z-index: 10;
-    background: var(--page-glass-solid) !important;
-    box-shadow: inset 0 -1px 0 var(--page-glass-edge), 0 4px 24px var(--page-glass-shadow);
-  }
-  .menu { background: transparent !important; }
-  .post.resume {
-    background: var(--page-glass-solid);
-    border-radius: 24px;
-    box-shadow: inset 0 0 0 1px var(--page-glass-edge), 0 16px 56px var(--page-glass-shadow);
-  }
-  .resume-hero .avatar { box-shadow: 0 0 0 5px var(--page-control), 0 8px 24px var(--page-glass-shadow); }
-  .resume-toc a, .resume-sub .count {
-    background: linear-gradient(150deg, var(--page-control), transparent), var(--chip);
-    box-shadow: inset 0 0 0 1px var(--page-glass-edge), 0 2px 8px var(--page-glass-shadow);
-  }
-  .resume-toc a:hover { background: var(--page-control); box-shadow: inset 0 0 0 1px var(--rule), 0 3px 10px var(--page-glass-shadow); }
-  .theme-toggle { background: var(--page-control); box-shadow: inset 0 0 0 1px var(--page-glass-edge); }
-  .to-top { box-shadow: inset 0 1px 0 #ffffff55, 0 6px 20px var(--page-glass-shadow); }
-  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .header, .post.resume {
-      background: var(--page-glass) !important;
-      backdrop-filter: blur(22px) saturate(1.25);
-      -webkit-backdrop-filter: blur(22px) saturate(1.25);
-    }
-  }
-  @media (max-width:684px) {
-    .menu {
-      background: var(--page-glass-solid) !important;
-      border-radius: 14px;
-      box-shadow: inset 0 0 0 1px var(--page-glass-edge), 0 12px 32px var(--page-glass-shadow);
-    }
-    .post.resume { border-radius: 18px; }
-  }
-  @media (prefers-reduced-transparency:reduce) {
-    body { background-image: none; }
-    .header, .post.resume { background: var(--page-glass-solid) !important; backdrop-filter: none; -webkit-backdrop-filter: none; }
-  }
-}
 @media screen and (max-width:684px) {
   .resume-hero > div, .tl-body { min-width: 0; max-width: 100%; }
   .post.resume { overflow-wrap: anywhere; }
