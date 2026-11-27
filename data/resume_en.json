@@ -1,6 +1,6 @@
 {
   "_note": "Hand-maintained English resume. Publications are copied from the synced Chinese page (they are already in English). Names in parentheses are the original Chinese where no official English name could be verified.",
-  "updated": "2026-10-20",
+  "updated": "2026-11-27",
   "name": "Sheng-Shan Chen 陳勝舢",
   "intro": [
     "“Sean” comes from the first and last letters of Sheng-Shan, a name given by his Ph.D. advisor.",
@@ -14,7 +14,7 @@
       "items": [
         {"type": "timeline", "entries": [
           {"date": "2022/09 – 2026/03", "html": "Ph.D., Department of Computer Science and Information Engineering, National Taipei University of Technology — <a href=\"https://ntut-biolab.github.io/\" target=\"_blank\" rel=\"noopener\">Biomedical Informatics Laboratory</a> / <a href=\"https://is1ab.com\" target=\"_blank\" rel=\"noopener\">Information Security Laboratory</a> (資訊安全實驗室)"},
-          {"date": "2024/08 – 2025/02", "html": "Visiting Researcher, Department of Software Systems and Cybersecurity, Monash University, Australia"},
+          {"date": "2025/08 – 2026/02", "html": "Visiting Researcher, Department of Software Systems and Cybersecurity, Monash University, Australia"},
           {"date": "2023/07 – 2026/03", "html": "Ph.D. Student Researcher, Institute of Biomedical Engineering and Nanomedicine, National Health Research Institutes (NHRI)"},
           {"date": "2022/08 – 2026/03", "html": "Ph.D. Student Researcher, Cyber Threat Intelligence Division (網路威脅情資組), National Institute of Cyber Security (NICS), including the Cybersecurity Center of Excellence (CCoE)"},
           {"date": "2026/07 – Present", "html": "Cybersecurity Researcher, CyCraft Technology Corporation"},
@@ -91,6 +91,7 @@
       "id": "links",
       "items": [
         {"type": "links", "entries": [
+          {"label": "Personal website", "html": "<a href=\"https://stwater20.github.io/\" target=\"_blank\" rel=\"noopener\">https://stwater20.github.io/</a>"},
           {"label": "Professional experience", "html": "<a href=\"https://www.linkedin.com/in/shansc\" target=\"_blank\" rel=\"noopener\">https://www.linkedin.com/in/shansc</a>"},
           {"label": "Google Scholar", "html": "<a href=\"https://scholar.google.com/citations?user=lgOY-SoAAAAJ\" target=\"_blank\" rel=\"noopener\">https://scholar.google.com/citations?user=lgOY-SoAAAAJ</a>"},
           {"label": "ORCID", "html": "<a href=\"https://orcid.org/0000-0002-5444-2029\" target=\"_blank\" rel=\"noopener\">https://orcid.org/0000-0002-5444-2029</a>"},

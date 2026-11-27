@@ -213,13 +213,16 @@ def parse_resume(page):
     if not sections:
         raise ValueError("no <h2> sections found")
 
-    # The first h2 is the name heading; its paragraphs are the intro.
+    # Keep contact rows separately so they are not discarded, or mistaken for
+    # the biography used by the page description and structured data.
     header = sections.pop(0)
     intro = [it["html"] for it in header["items"] if it["type"] == "paragraph"]
+    intro_links = [entry for it in header["items"] if it["type"] == "links" for entry in it["entries"]]
 
     return {
         "name": header["title"],
         "intro": intro,
+        "intro_links": intro_links,
         "avatar_source": images[0] if images else None,
         "sections": sections,
         "source": {"url": page.get("link") or SOURCE_PAGE, "id": page.get("id"), "modified_gmt": page.get("modified_gmt")},
@@ -333,6 +336,10 @@ def build_english(resume):
         if "from_zh" in sec:
             sec["items"] = zh_sections[sec["from_zh"]]["items"]
     en["source"] = resume["source"]
+    en["intro_links"] = [
+        {**entry, "label": "Email" if 'href="mailto:' in entry["html"] else entry["label"]}
+        for entry in resume.get("intro_links", [])
+    ]
     # Remind (in the sync log / PR) when the Chinese page gained entries the English page lacks.
     def count(sec):
         return sum(len(it.get("entries", [])) for it in sec["items"])
@@ -387,7 +394,10 @@ def render(resume, lang):
         name=html.escape(resume["name"].strip()),
         name_plain=html.escape(resume["name"].strip(), quote=True),
         description=html.escape(intro_text, quote=True),
-        intro="\n".join("<p>%s</p>" % p for p in resume["intro"]),
+        intro="\n".join("<p>%s</p>" % p for p in resume["intro"]) + "".join(
+            "\n<p>%s%s%s</p>" % (html.escape(entry["label"]), ": " if lang == "en" else "：", entry["html"])
+            for entry in resume.get("intro_links", [])
+        ),
         toc="\n".join(toc),
         sections="\n".join(body),
         sync_note=cfg["sync_note"] % {"source": html.escape(resume["source"]["url"], quote=True), "updated": updated},
