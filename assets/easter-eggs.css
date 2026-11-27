@@ -20,6 +20,8 @@
   padding: 10px 16px; border-bottom: 1px solid var(--rule); background: var(--surface);
 }
 .egg-terminal__title { margin: 0; font: inherit; font-size: .875rem; }
+.egg-terminal__passport { margin: 0; padding: 10px 16px 0; color: var(--accent); font-size: .875rem; }
+.egg-terminal__output a { color: var(--accent); text-underline-offset: 3px; }
 .egg-terminal button {
   min-width: 44px; min-height: 44px; border: 1px solid var(--rule); border-radius: 6px;
   padding: 4px 10px; background: var(--chip); color: inherit; font: inherit; cursor: pointer;

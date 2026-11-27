@@ -23,6 +23,30 @@
     konami: '↑ ↑ ↓ ↓ ← → ← → B A\n秘密握手成功，好奇心 +30。\n試試 cat flag.txt，還有一個小發現。'
   };
 
+  const challenges = [
+    { id: 'terminal', flag: 'FLAG{stay_curious_stay_kind}', name: en ? 'First flag' : '第一次奪旗', hint: en ? 'Look around with ls, then read flag.txt.' : '用 ls 看看，再讀取 flag.txt。' },
+    { id: 'source', flag: 'FLAG{read_between_the_tags}', name: en ? 'Source explorer' : '原始碼探索者', hint: en ? 'Look for CTF SOURCE in the HTML source. On mobile, type source.' : '在 HTML 原始碼找 CTF SOURCE；手機可輸入 source。' },
+    { id: 'team', flag: 'FLAG{sean_and_yuki}', name: en ? 'Meet the maintainers' : '認識共同維護者', hint: en ? 'Read the maintenance credit at the bottom of this page. Format: FLAG{first_english_name_and_second_english_name}, all lowercase.' : '答案在頁面底部的共同維護署名。格式：FLAG{第一位英文名_and_第二位英文名}，名字都用小寫。' }
+  ];
+  const badges = [...challenges, { id: 'coffee', name: en ? 'Coffee break' : '咖啡休息' }, { id: 'konami', name: en ? 'Secret handshake' : '秘密握手' }];
+  const storageKey = 'sean-easter-passport-v1';
+  let stamps = new Set();
+  let canSave = true;
+  function readStamps() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      return new Set(Array.isArray(saved) ? saved.filter(id => badges.some(badge => badge.id === id)) : []);
+    } catch { canSave = false; return new Set(); }
+  }
+  stamps = readStamps();
+  const completed = () => challenges.filter(challenge => stamps.has(challenge.id)).length;
+  const destinations = [
+    { url: 'https://sectools.tw/tools', title: en ? 'SecTools tool collection' : 'SecTools 神奇無用工具集', why: en ? 'Pick a tool or a small distraction for your next break.' : '從工具到研究生日常，挑一個讓自己休息一下。' },
+    { url: 'https://sectools.tw/archives/1', title: en ? 'The story of SecTools' : 'SecTools 的故事', why: en ? 'See how this shared project grew.' : '看看這個共同維護的網站一路走來的故事。' },
+    { url: 'https://gacha-sho.sectools.tw/', title: en ? 'Cyber threat gacha' : '資安威脅扭蛋機', why: en ? 'Turn a capsule and discover a cyber threat story.' : '轉一顆扭蛋，認識一種資安威脅。' }
+  ];
+  let lastDestination = -1;
+
   const trigger = document.createElement('button');
   trigger.type = 'button';
   trigger.className = 'egg-trigger';
@@ -40,6 +64,7 @@
       <h2 class="egg-terminal__title" id="egg-title">visitor@sean:~</h2>
       <button type="button" class="egg-terminal__close" aria-label="${copy.close}">×</button>
     </div>
+    <p class="egg-terminal__passport"></p>
     <div class="egg-terminal__output" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="${en ? 'Terminal output' : '終端機輸出'}"></div>
     <form class="egg-terminal__form">
       <label for="egg-command"><span aria-hidden="true">$</span><span hidden>${copy.input}</span></label>
@@ -53,6 +78,53 @@
   const input = terminal.querySelector('input');
   let previousFocus;
 
+  function updatePassport() {
+    terminal.querySelector('.egg-terminal__passport').textContent =
+      (en ? 'Explorer passport' : '探索護照') + ' · CTF ' + completed() + '/3 · ' +
+      (en ? 'bonus ' : '彩蛋 ') + badges.slice(3).filter(badge => stamps.has(badge.id)).length + '/2';
+  }
+  updatePassport();
+
+  function award(id) {
+    // Merge saved stamps so another tab's discoveries are not overwritten.
+    readStamps().forEach(stamp => stamps.add(stamp));
+    if (stamps.has(id)) { updatePassport(); return false; }
+    stamps.add(id);
+    try { localStorage.setItem(storageKey, JSON.stringify([...stamps])); canSave = true; }
+    catch { canSave = false; }
+    updatePassport();
+    write((en ? 'Stamp earned: ' : '獲得印章：') + badges.find(badge => badge.id === id).name);
+    if (completed() === 3 && challenges.some(challenge => challenge.id === id)) {
+      write(en ? 'All flags captured! Thanks for exploring. Type explore to open a door into SecTools, maintained by Sean and Yuki.' : '三面旗標收集完成！謝謝你保持好奇。輸入 explore，解鎖 Sean 與 Yuki 共同維護的 SecTools 任意門。');
+    }
+    return true;
+  }
+
+  function passport() {
+    write(badges.map(badge => (stamps.has(badge.id) ? '[✓] ' : '[ ] ') + badge.name).join('\n'));
+    write(canSave ? (en ? 'Progress stays in this browser.' : '進度只存於這個瀏覽器。') : (en ? 'Browser storage is unavailable; progress lasts for this page session.' : '瀏覽器儲存空間無法使用，進度只保留在本次頁面。'));
+    write(completed() === 3 ? (en ? 'Type explore to visit your next destination.' : '輸入 explore，出發前往下一站。') : (en ? 'Type ctf for the next challenge.' : '輸入 ctf 查看下一道題。'));
+  }
+
+  function explore() {
+    if (completed() < 3) {
+      write(en ? 'The door opens after all 3 flags. Type ctf or hint to continue.' : '收集三面旗標後開門。輸入 ctf 或 hint 繼續探索。');
+      return;
+    }
+    const choices = destinations.map((_, index) => index).filter(index => index !== lastDestination);
+    lastDestination = choices[Math.floor(Math.random() * choices.length)];
+    const destination = destinations[lastDestination];
+    write(destination.why);
+    const line = write('');
+    const link = document.createElement('a');
+    link.href = destination.url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = destination.title + (en ? ' (opens a new tab)' : '（另開分頁）');
+    line.append(link);
+    output.scrollTop = output.scrollHeight;
+  }
+
   function write(message, command = false) {
     const line = document.createElement('p');
     line.textContent = message;
@@ -61,6 +133,7 @@
     // Keep long play sessions small, including screen-reader history.
     while (output.children.length > 60) output.firstElementChild.remove();
     output.scrollTop = output.scrollHeight;
+    return line;
   }
 
   function open(secret = false) {
@@ -68,7 +141,7 @@
     previousFocus = document.activeElement;
     terminal.showModal();
     if (!output.childElementCount) write(copy.welcome);
-    if (secret) write(copy.konami);
+    if (secret) { write(copy.konami); award('konami'); }
     input.focus({ preventScroll: true });
   }
 
@@ -80,17 +153,39 @@
     else if (command === 'exit') terminal.close();
     else {
       write('$ ' + value.trim(), true);
-      const answers = {
-        help: copy.help, whoami: copy.whoami, ls: 'flag.txt',
-        'cat flag.txt': copy.flag, coffee: copy.coffee,
-        'sudo': en ? 'Kindness needs no root privileges.' : '善意不需要 root 權限。'
-      };
-      write(Object.hasOwn(answers, command) ? answers[command] : copy.unknown);
+      if (command === 'ctf' || command === 'hint') {
+        const next = challenges.find(challenge => !stamps.has(challenge.id));
+        write(next ? (en ? 'Next challenge: ' : '下一道題：') + next.name + '\n' + next.hint + '\n' + (en ? 'Submit with: submit FLAG{...}' : '找到後輸入：submit FLAG{...}') : (en ? 'All 3 flags captured. Type explore for your reward.' : '三面旗標已集滿，輸入 explore 領取獎勵。'));
+      } else if (command.startsWith('submit ')) {
+        const flag = value.trim().split(/\s+/).slice(1).join(' ');
+        const match = challenges.find(challenge => challenge.flag === flag);
+        if (!match) write(en ? 'Not quite. Flags are case-sensitive; type hint for a clue.' : '還差一點！旗標有區分大小寫，輸入 hint 取得提示。');
+        else if (!award(match.id)) write(en ? 'Already stamped. Type ctf for the next challenge.' : '這面旗標已蓋章，輸入 ctf 查看下一道題。');
+      } else if (command === 'passport') passport();
+      else if (command === 'explore') explore();
+      else if (command === 'source') {
+        const comments = document.createTreeWalker(document, NodeFilter.SHOW_COMMENT);
+        let clue;
+        while (comments.nextNode()) {
+          if (comments.currentNode.data.includes('CTF SOURCE:')) { clue = comments.currentNode.data.trim(); break; }
+        }
+        write(clue || (en ? 'Reload the page to retrieve the source clue.' : '請重新整理頁面以取得原始碼線索。'));
+      } else {
+        const answers = {
+          help: copy.help, whoami: copy.whoami, ls: 'flag.txt',
+          'cat flag.txt': copy.flag, coffee: copy.coffee,
+          'sudo': en ? 'Kindness needs no root privileges.' : '善意不需要 root 權限。'
+        };
+        write(Object.hasOwn(answers, command) ? answers[command] : copy.unknown);
+        if (command === 'help') write('ctf · hint · source · submit FLAG{...} · passport · explore');
+        if (command === 'cat flag.txt') award('terminal');
+        if (command === 'coffee') award('coffee');
+      }
     }
     if (terminal.open) input.focus({ preventScroll: true });
   }
 
-  ['help', 'whoami', 'ls', 'coffee'].forEach(command => {
+  ['ctf', 'hint', 'source', 'passport', 'explore', 'help', 'coffee'].forEach(command => {
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = command;
@@ -129,5 +224,8 @@
     }
   });
   window.addEventListener('blur', () => { keys = []; });
+  window.addEventListener('storage', event => {
+    if (event.key === storageKey || event.key === null) { stamps = readStamps(); updatePassport(); }
+  });
   console.info('[sean@home] Curiosity looks good on you. Try ↑ ↑ ↓ ↓ ← → ← → B A, or find >_ in the footer.');
 })();
