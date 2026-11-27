@@ -1,54 +1,183 @@
-/* A quiet invitation, styled to match the site's terminal header. */
-.egg-trigger {
-  display: block; margin: 14px auto 0; min-width: 44px; min-height: 44px;
-  border: 1px solid transparent; border-radius: 8px;
-  background: transparent; color: var(--accent); cursor: pointer;
-  font: 1rem ui-monospace, SFMono-Regular, Consolas, monospace;
-}
-.egg-trigger:hover { background: var(--chip); border-color: var(--rule); }
+/* The glass workspace is scoped; the resume keeps its own palette. */
+.terminal-launcher { border-radius: 10px; padding: 9px 8px; margin: -9px -8px; transition: background .2s; }
+button.terminal-launcher { border: 0; background: transparent; color: inherit; cursor: pointer; font: inherit; text-align: left; }
+.terminal-launcher:hover, button.terminal-launcher:hover { background: var(--chip); }
+.terminal-launcher:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+html.egg-open { overflow: hidden; }
 .egg-terminal {
-  width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 32px);
-  padding: 0; border: 1px solid var(--rule); border-radius: 14px;
-  background: var(--bg); color: #29231d;
-  box-shadow: 0 24px 80px #0005; text-align: left; letter-spacing: 0;
-  font: 1rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+  --glass: #f4f6fc; --ink: #252738; --secondary: #61657a; --line: #777a9c26;
+  --panel: #ffffff80; --field: #ffffffb8; --hover: #fff9; --violet: #6551c8;
+  --tint: #7661dd13; --terminal-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  width: min(940px, calc(100vw - 48px)); height: min(680px, calc(100dvh - 64px));
+  max-width: none; max-height: none; margin: auto; padding: 0;
+  border: 1px solid #ffffffc7; border-radius: 24px; overflow: hidden;
+  background: var(--glass); color: var(--ink); color-scheme: light;
+  box-shadow: 0 36px 100px #12112640, 0 8px 28px #12112620, inset 0 1px 0 #fff;
+  font: 1rem/1.55 -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  letter-spacing: -.015em; text-align: left;
 }
-:root[data-theme-effective="dark"] .egg-terminal { color: #e6ddd3; }
-.egg-terminal::backdrop { background: #0008; }
-.egg-terminal__header {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 16px; border-bottom: 1px solid var(--rule); background: var(--surface);
+.egg-terminal[open] { display: flex; flex-direction: column; animation: egg-arrive .24s ease-out; }
+.egg-terminal.is-expanded { width: min(1200px, calc(100vw - 32px)); height: calc(100dvh - 32px); }
+.egg-terminal::backdrop { background: #17182d40; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+:root[data-theme-effective="dark"] .egg-terminal {
+  --glass: #202231; --ink: #eceefa; --secondary: #a7adc5; --line: #d0d5ff1f;
+  --panel: #ffffff07; --field: #0e112a70; --hover: #ffffff0d;
+  --violet: #b8abff; --tint: #b8abff14;
+  color-scheme: dark; border-color: #e0e5ff30;
+  box-shadow: 0 36px 100px #0008, inset 0 1px 0 #ffffff26;
 }
-.egg-terminal__title { margin: 0; font: inherit; font-size: .875rem; }
-.egg-terminal__passport { margin: 0; padding: 10px 16px 0; color: var(--accent); font-size: .875rem; }
-.egg-terminal__output a { color: var(--accent); text-underline-offset: 3px; }
-.egg-terminal button {
-  min-width: 44px; min-height: 44px; border: 1px solid var(--rule); border-radius: 6px;
-  padding: 4px 10px; background: var(--chip); color: inherit; font: inherit; cursor: pointer;
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .egg-terminal {
+    background: radial-gradient(ellipse at 5% 0, #d9d4ff70, transparent 55%), radial-gradient(ellipse at 100% 100%, #ccedf140, transparent 55%), #f5f7fbd9;
+    backdrop-filter: blur(36px) saturate(1.45); -webkit-backdrop-filter: blur(36px) saturate(1.45);
+  }
+  :root[data-theme-effective="dark"] .egg-terminal {
+    background: radial-gradient(ellipse at 5% 0, #6761ad29, transparent 55%), radial-gradient(ellipse at 100% 100%, #46788420, transparent 55%), #1b1d2be8;
+  }
 }
-.egg-terminal button:hover { border-color: var(--accent); }
-.egg-terminal__output {
-  height: min(260px, 35dvh); overflow: auto; padding: 16px;
-  overscroll-behavior: contain; overflow-wrap: anywhere;
+.egg-terminal * { box-sizing: border-box; }
+.egg-terminal [hidden] { display: none !important; }
+.egg-terminal button, .egg-terminal input { font: inherit; letter-spacing: inherit; }
+.egg-terminal button { color: inherit; cursor: pointer; }
+.egg-terminal button:disabled { cursor: default; opacity: .45; }
+.egg-terminal :focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+.egg-terminal a { color: var(--violet); text-underline-offset: 3px; }
+.egg-terminal h2, .egg-terminal h3, .egg-terminal p { margin: 0; }
+.egg-terminal h2, .egg-terminal h3 { display: block; color: inherit; }
+.egg-terminal__bar { display: grid; grid-template-columns: 112px 1fr 112px; align-items: center; min-height: 64px; padding: 8px 16px; border-bottom: 1px solid var(--line); flex: none; background: linear-gradient(#ffffff24, #ffffff04); }
+.egg-controls { display: flex; gap: 2px; }
+.egg-controls button { position: relative; display: grid; place-items: center; width: 32px; height: 40px; padding: 0; border: 0; background: transparent; }
+.egg-controls button::before { content: ''; width: 13px; height: 13px; border-radius: 50%; background: var(--control); box-shadow: inset 0 0 0 1px #00000012; }
+.egg-controls button span { position: absolute; font: 13px/1 sans-serif; color: #352e38; opacity: 0; }
+.egg-controls:hover span, .egg-controls button:focus-visible span { opacity: 1; }
+.egg-controls__close { --control: #ff6159; }
+.egg-controls__minimize { --control: #ffbd2e; }
+.egg-controls__expand { --control: #28c840; }
+.egg-terminal__bar h2 { font-size: .875rem; font-weight: 600; text-align: center; }
+.egg-terminal__bar small { display: block; color: var(--secondary); font: .75rem/1.5 var(--terminal-mono); font-weight: 400; }
+.egg-terminal__escape { justify-self: end; font: .75rem var(--terminal-mono); color: var(--secondary); border: 1px solid var(--line); border-radius: 5px; padding: 3px 7px; }
+.egg-workspace { display: grid; grid-template-columns: 190px minmax(0, 1fr); flex: 1; min-height: 0; }
+.egg-sidebar { padding: 24px 12px 16px; display: flex; flex-direction: column; gap: 20px; border-right: 1px solid var(--line); background: #8a85c706; }
+.egg-sidebar__caption { padding: 0 12px; font-size: .75rem; font-weight: 600; letter-spacing: .09em; color: var(--secondary); }
+.egg-tabs { display: flex; flex-direction: column; gap: 6px; }
+.egg-tabs button { display: flex; align-items: center; gap: 11px; min-height: 46px; padding: 10px 12px; border: 1px solid transparent; border-radius: 10px; text-align: left; background: transparent; font-size: .875rem; font-weight: 500; white-space: nowrap; }
+.egg-tabs button:hover { background: var(--hover); }
+.egg-tabs button[aria-selected="true"] { color: var(--violet); background: var(--panel); border-color: var(--line); box-shadow: 0 2px 5px #22213a06, inset 0 1px 0 #ffffff20; }
+.egg-tabs svg { width: 18px; height: 18px; flex: none; }
+.egg-sidebar__bottom { margin-top: auto; padding: 0 12px; color: var(--secondary); font-size: .75rem; line-height: 1.7; }
+.egg-sidebar__bottom a { display: inline-block; margin-top: 8px; text-decoration: none; font-size: .875rem; }
+.egg-panel { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.egg-panel__heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 26px 12px; flex: none; }
+.egg-panel__heading h3 { font-size: .875rem; font-weight: 600; }
+.egg-panel__heading span { color: var(--secondary); font: .75rem var(--terminal-mono); }
+.egg-terminal__output { flex: 1; min-height: 80px; padding: 12px 26px 24px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #9692b84d transparent; }
+.egg-welcome { padding: 12px 0 24px; }
+.egg-app-icon { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 15px; margin-bottom: 18px; font: 1.4rem var(--terminal-mono); color: #fff; background: linear-gradient(145deg, #8d82db, #4e55a2); border: 1px solid #ffffff60; box-shadow: 0 8px 18px #6257ad26, inset 0 1px 0 #ffffff50; }
+.egg-welcome h3 { font-size: 1.65rem; line-height: 1.25; letter-spacing: -.04em; margin-bottom: 10px; font-weight: 600; }
+.egg-welcome p { max-width: 42ch; color: var(--secondary); font-size: 1rem; line-height: 1.8; }
+.egg-welcome__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+.egg-welcome__cards button { padding: 14px 16px; min-height: 74px; text-align: left; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); transition: background .15s, transform .15s; }
+.egg-welcome__cards button:hover { background: var(--hover); transform: translateY(-2px); }
+.egg-welcome__cards span { display: block; font-size: .875rem; font-weight: 600; }
+.egg-welcome__cards small { display: block; font-size: .75rem; color: var(--secondary); margin-top: 4px; }
+.egg-line { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 16px !important; font: .875rem/1.85 var(--terminal-mono); }
+.egg-line--command { margin-top: 22px !important; color: var(--violet); padding-top: 14px; border-top: 1px solid var(--line); }
+.egg-line--success { color: var(--violet); }
+.egg-composer { margin: 0 26px 12px; padding: 8px 10px 8px 14px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 13px; background: var(--field); box-shadow: inset 0 1px 2px #1e214007, 0 4px 12px #1e214004; flex: none; }
+.egg-composer:focus-within { border-color: var(--violet); box-shadow: 0 0 0 3px var(--tint); }
+.egg-composer label { color: var(--violet); font: 1rem var(--terminal-mono); }
+.egg-composer input { min-width: 0; flex: 1; border: 0; padding: 8px 0; outline: none !important; background: transparent; color: var(--ink); font: 1rem/1.5 var(--terminal-mono); }
+.egg-composer input::placeholder { color: var(--secondary); opacity: .8; }
+.egg-composer button { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; min-height: 40px; min-width: 48px; padding: 8px 12px; font-size: .875rem; font-weight: 600; }
+.egg-composer button:hover { background: var(--hover); }
+.egg-shortcuts { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 26px 12px; flex: none; }
+.egg-shortcuts button, .egg-ai-prompts button { min-height: 34px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 7px; background: transparent; font: .8125rem var(--terminal-mono); color: var(--secondary); }
+.egg-shortcuts button:hover, .egg-ai-prompts button:hover { color: var(--violet); background: var(--tint); border-color: var(--violet); }
+.egg-shortcuts__label { width: 100%; min-height: 18px; font-size: .75rem; color: var(--secondary); }
+.egg-keyboard-hint { padding: 0 26px 16px; color: var(--secondary); font-size: .75rem; flex: none; }
+.egg-ai-log { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 26px 24px; min-height: 60px; scrollbar-width: thin; }
+.egg-ai-intro { margin: 8px 0 26px; }
+.egg-ai-intro .egg-app-icon { background: linear-gradient(145deg, #b99be3, #7b6ac9); font-family: inherit; }
+.egg-ai-intro h3 { font-size: 1.65rem; font-weight: 600; letter-spacing: -.04em; margin-bottom: 10px; }
+.egg-ai-intro p { color: var(--secondary); font-size: 1rem; line-height: 1.8; }
+.egg-ai-prompts { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+.egg-ai-prompts button { min-height: 40px; font-family: inherit; font-size: .875rem; }
+.egg-chat { margin: 18px 0; max-width: 94%; font-size: 1rem; line-height: 1.8; }
+.egg-chat__label { display: block; color: var(--secondary); font-size: .75rem; margin-bottom: 6px; }
+.egg-chat p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.egg-chat--user { margin-left: auto; border: 1px solid var(--line); background: var(--panel); border-radius: 14px 14px 3px 14px; padding: 10px 15px; width: fit-content; }
+.egg-recommendation { display: block; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); text-decoration: none; margin-top: 12px; }
+.egg-recommendation:hover { background: var(--hover); border-color: var(--violet); }
+.egg-recommendation span { display: block; font-size: .9375rem; font-weight: 600; }
+.egg-recommendation small { display: block; font-size: .75rem; color: var(--secondary); margin-top: 4px; overflow-wrap: anywhere; }
+.egg-collection { overflow-y: auto; padding: 12px 26px 26px; scrollbar-width: thin; }
+.egg-collection__hero { display: flex; align-items: center; gap: 22px; padding: 10px 0 24px; }
+.egg-ring { flex: none; width: 82px; height: 82px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--violet) var(--earned, 0%), var(--line) 0); }
+.egg-ring span { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--glass); color: var(--ink); font: 1rem var(--terminal-mono); }
+.egg-collection__hero h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 5px; }
+.egg-collection__hero p { color: var(--secondary); font-size: .875rem; }
+.egg-badge-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; list-style: none; margin: 0; padding: 0; }
+.egg-badge { padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: var(--panel); overflow-wrap: anywhere; }
+.egg-badge__icon { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 10px; font: 1rem var(--terminal-mono); background: var(--tint); color: var(--violet); }
+.egg-badge h3 { font-size: .875rem; font-weight: 600; margin-bottom: 5px; }
+.egg-badge p { font-size: .875rem; color: var(--secondary); line-height: 1.65; }
+.egg-badge--locked { background: transparent; border-style: dashed; }
+.egg-badge--locked .egg-badge__icon { color: var(--secondary); background: transparent; }
+.egg-storage-note { margin-top: 18px !important; font-size: .75rem; color: var(--secondary); }
+.egg-toast { position: absolute; z-index: 2; top: 76px; right: 16px; width: min(360px, calc(100% - 32px)); padding: 12px 14px; border: 1px solid var(--line); border-radius: 15px; background: var(--glass); color: var(--ink); box-shadow: 0 12px 32px #16142c26; display: flex; align-items: center; gap: 12px; pointer-events: none; }
+.egg-toast__icon { color: var(--violet); font-size: 1.4rem; }
+.egg-toast__text { flex: 1; min-width: 0; font-size: .875rem; }
+.egg-toast__text small { display: block; font-size: .75rem; color: var(--secondary); }
+.egg-toast button { border: 0; min-height: 40px; padding: 5px 9px; background: var(--tint); color: var(--violet); border-radius: 8px; font-size: .875rem; pointer-events: auto; }
+@keyframes egg-arrive { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: none; } }
+@media (max-width: 700px) {
+  .egg-terminal { width: calc(100vw - 24px); height: min(760px, calc(100dvh - 24px)); border-radius: 20px; }
+  .egg-terminal__bar { min-height: 58px; grid-template-columns: 100px 1fr 40px; padding: 4px 12px; }
+  .egg-terminal__escape { display: none; }
+  .egg-workspace { display: flex; flex-direction: column; }
+  .egg-sidebar { flex: none; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .egg-sidebar__caption, .egg-sidebar__bottom { display: none; }
+  .egg-tabs { flex-direction: row; gap: 4px; }
+  .egg-tabs button { justify-content: center; flex: 1; min-width: 0; padding: 8px 6px; gap: 6px; font-size: .8125rem; }
+  .egg-tabs svg { width: 16px; height: 16px; }
+  .egg-panel { flex: 1; }
+  .egg-panel__heading { padding: 16px 18px 8px; }
+  .egg-terminal__output, .egg-ai-log { padding: 8px 18px 20px; }
+  .egg-welcome h3, .egg-ai-intro h3 { font-size: 1.4rem; }
+  .egg-welcome__cards { gap: 8px; }
+  .egg-welcome__cards button { padding: 12px; }
+  .egg-composer { margin: 0 14px 10px; }
+  .egg-composer button { min-height: 44px; }
+  .egg-shortcuts { padding: 0 14px 12px; gap: 5px; }
+  .egg-shortcuts button { min-height: 40px; }
+  .egg-keyboard-hint { display: none; }
+  .egg-collection { padding: 10px 18px 22px; }
+  .egg-collection__hero { gap: 14px; }
+  .egg-badge { padding: 12px; }
+  .egg-toast { top: 130px; right: 12px; width: calc(100% - 24px); }
 }
-.egg-terminal__output p { margin: 0 0 12px; white-space: pre-wrap; }
-.egg-terminal__command { color: var(--accent); }
-.egg-terminal__form {
-  display: flex; align-items: center; gap: 8px; margin: 0 16px;
-  border-top: 1px solid var(--rule); padding: 12px 0;
+@media (max-width: 380px) {
+  .egg-tabs svg { display: none; }
+  .egg-tabs button { font-size: .8125rem; padding: 8px 3px; }
+  .egg-badge-grid { grid-template-columns: minmax(0, 1fr); }
+  .egg-collection__hero h3 { font-size: 1.125rem; }
+  .egg-ring { width: 62px; height: 62px; }
+  .egg-ring span { width: 52px; height: 52px; font-size: .875rem; }
 }
-.egg-terminal__form label { color: var(--accent); }
-.egg-terminal__form input {
-  flex: 1; min-width: 0; width: 100%; padding: 8px 4px;
-  border: 0; background: transparent; color: inherit; font: inherit;
+@media (max-height: 520px) {
+  .egg-terminal { height: calc(100dvh - 12px); }
+  .egg-panel__heading, .egg-shortcuts, .egg-keyboard-hint { display: none; }
+  .egg-terminal__bar { min-height: 48px; }
+  .egg-sidebar { padding-top: 6px; padding-bottom: 6px; }
+  .egg-tabs button { min-height: 38px; }
 }
-.egg-terminal__hints { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px; }
-.egg-terminal__hints button { font-size: .875rem; }
-.egg-terminal__more { margin: 0; padding: 0 16px 16px; font-size: .875rem; }
-.egg-terminal__more a { color: var(--accent); text-underline-offset: 3px; }
-.egg-trigger:focus-visible, .egg-terminal :focus-visible {
-  outline: 2px solid var(--accent); outline-offset: 3px;
+@media (prefers-reduced-motion: reduce) {
+  .egg-terminal[open] { animation: none; }
+  .egg-welcome__cards button, .terminal-launcher { transition: none; }
+  .egg-welcome__cards button:hover { transform: none; }
 }
-@media print {
-  .egg-trigger, .egg-terminal, .egg-terminal::backdrop { display: none !important; }
+@media (prefers-reduced-transparency: reduce) {
+  .egg-terminal { background: var(--glass) !important; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .egg-terminal::backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; background: #17182d70; }
 }
+@media print { .egg-terminal, .egg-terminal::backdrop { display: none !important; } }
