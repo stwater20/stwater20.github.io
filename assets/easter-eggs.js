@@ -55,7 +55,12 @@
     collector: '<path d="m3 7 5 4 4-7 4 7 5-4-3 12H6Zm4 15h10"/>'
   };
   let collectionFilter = 'all';
-  let selectedBadge = 'terminal';
+  let selectedBadge = null;
+  const mysteryMark = '<rect x="6" y="10" width="12" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>';
+  const discovery = window.SeanDiscovery;
+  const localText = pair => pair[en ? 1 : 0];
+  let aiState = discovery.createState();
+  let aiMode = 'match';
   let coffeeCount = 0;
   let ritualStep = 0;
   const storageKey = 'sean-easter-passport-v1'; // Keep existing passports compatible.
@@ -126,18 +131,22 @@
         <p class="egg-keyboard-hint">${t('Tab 補全指令 · ↑ ↓ 查找歷史 · Esc 關閉視窗', 'Tab to complete · ↑ ↓ for history · Esc to close')}</p>
       </section>
       <section class="egg-panel" id="egg-panel-ai" role="tabpanel" aria-labelledby="egg-tab-ai" hidden>
-        <div class="egg-panel__heading"><h3>SecTools AI</h3><span>${t('假 AI · 本機回覆', 'FAUX AI · LOCAL')}</span></div>
+        <div class="egg-panel__heading egg-ai-heading"><h3>SecTools AI <span class="egg-ai-local">${t('假 AI · 本機回覆', 'FAUX AI · LOCAL')}</span></h3><button type="button" class="egg-ai-reset">${t('重新開始', 'Start over')}</button></div>
+        <div class="egg-ai-toolbar"><div class="egg-ai-modes" role="group" aria-label="${t('推薦玩法', 'Discovery mode')}"><button type="button" data-mode="match" aria-pressed="true">${t('幫我挑', 'Match')}</button><button type="button" data-mode="route" aria-pressed="false">${t('走路線', 'Trail')}</button><button type="button" data-mode="surprise" aria-pressed="false">${t('隨機逛', 'Surprise')}</button></div><button class="egg-ai-directory-toggle" type="button" aria-expanded="false" aria-controls="egg-directory">${t('全部 ', 'All ')}${discovery.sites.length}${t(' 站', ' sites')}</button></div>
         <div class="egg-ai-log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="${t('推坑機對話', 'Assistant conversation')}">
-          <div class="egg-ai-intro"><div class="egg-app-icon" aria-hidden="true">✦</div><h3>${t('什麼都能問。只會推坑。', 'Ask anything. Expect SecTools.')}</h3><p>${t('我很公平：不管問什麼，都會推薦 SecTools。沒有大型模型，只有一些小聰明和非常堅定的偏心。', 'I am completely consistent: every road leads to SecTools. No language model. Just a little wit and a very strong bias.')}</p><div class="egg-ai-prompts"></div></div>
+          <div class="egg-ai-intro"><div class="egg-ai-identity"><div class="egg-app-icon" aria-hidden="true">✦</div><span class="egg-eyebrow">SEAN’S INTERNET, CURATED.</span></div><h3>${t('你的下一個分頁，<br>我有點想法。', 'Your next tab.<br>I have a few ideas.')}</h3><p>${t('25 個網站，5 種日常。我負責挑一個剛好適合你的；至於偏愛 SecTools 這件事，我完全不打算改。', '25 sites. Five corners of everyday life. I will find a good place to start. My fondness for SecTools is non-negotiable.')}</p><div class="egg-ai-topic-grid"></div><details class="egg-ai-guide"><summary>${t('這台推坑機怎麼玩？', 'How does this work?')}</summary><p>${t('「幫我挑」按需求選一站；「走路線」串起同主題的 2–3 站；「隨機逛」優先帶你看本次還沒遇見的網站。可以接著說「換一個」，或點開推薦卡的小任務。這是本機規則與預寫內容，不是語言模型，也不提供即時查詢。', 'Match finds one site for your request. Trail connects 2–3 sites in a theme. Surprise favors places you have not met this session. Say “another” or open a card’s tiny mission. This uses local rules and written content, not a language model or live lookup.')}</p></details></div>
+          <section id="egg-directory" class="egg-directory" aria-label="${t('SecTools 網站目錄', 'SecTools site directory')}" hidden><h3>${t('每一站，都有自己的用途。', 'Every stop has its own purpose.')}</h3><p>${t('選一站，讓推坑機介紹給你。', 'Pick a site for a personal introduction.')}</p><div class="egg-directory__list"></div><a href="https://sectools.tw/tools" target="_blank" rel="noopener">${t('查看最新完整目錄 ↗', 'Latest full directory ↗')}</a></section>
+          <div class="egg-ai-messages"></div>
         </div>
-        <form class="egg-composer" id="egg-ai-form"><label for="egg-question" aria-hidden="true">✦</label><input id="egg-question" aria-label="${t('問推坑機', 'Ask SecTools AI')}" placeholder="${t('今天想找什麼？', 'What are you looking for?')}" maxlength="240" autocomplete="off" enterkeyhint="send"><button type="submit">${t('送出', 'Send')}</button></form>
-        <p class="egg-keyboard-hint">${t('預設趣味回覆；問題不會傳送到伺服器。', 'Playful preset replies. Your questions stay in this page.')}</p>
+        <div class="egg-ai-session"><span class="egg-ai-seen"></span><span>${t('偏心程度 100%', '100% biased')}</span></div>
+        <form class="egg-composer" id="egg-ai-form"><label for="egg-question" aria-hidden="true">✦</label><input id="egg-question" aria-label="${t('問推坑機', 'Ask SecTools AI')}" placeholder="${t('例如：論文卡住、婚宴場地…', 'Try: paper blocked, wedding venue…')}" maxlength="240" autocomplete="off" enterkeyhint="send"><button type="submit">${t('送出', 'Send')}</button></form>
+        <p class="egg-keyboard-hint">${t('本機趣味推薦 · 對話不外送，重新整理即清除', 'Local, playful recommendations · Chat clears on reload')}</p>
       </section>
       <section class="egg-panel" id="egg-panel-collection" role="tabpanel" aria-labelledby="egg-tab-collection" hidden>
         <div class="egg-panel__heading"><h3>${t('秘密收藏室', 'The hidden collection')}</h3><span>EXPLORER’S CLUB</span></div>
         <div class="egg-collection" tabindex="0">
           <div class="egg-collection__hero"><div class="egg-ring"><span></span></div><div><span class="egg-eyebrow">CURIOSITY SOCIETY / 001</span><h3 class="egg-rank"></h3><p class="egg-rank-note"></p></div></div>
-          <div class="egg-discovery" aria-live="polite"><div class="egg-discovery__art" aria-hidden="true"></div><div class="egg-discovery__body"><span class="egg-discovery__label egg-eyebrow"></span><h3 tabindex="-1"></h3><p></p><button type="button">${t('去終端機探索 ↗', 'Explore in Terminal ↗')}</button></div></div>
+          <div class="egg-discovery" hidden aria-live="polite"><div class="egg-discovery__art" aria-hidden="true"></div><div class="egg-discovery__body"><span class="egg-discovery__label egg-eyebrow"></span><h3 tabindex="-1"></h3><p></p><button type="button">${t('去終端機探索 ↗', 'Explore in Terminal ↗')}</button></div></div>
           <div class="egg-filters" role="group" aria-label="${t('篩選成就', 'Filter achievements')}"><button type="button" data-filter="all" aria-pressed="true">${t('全部', 'All')} <span></span></button><button type="button" data-filter="earned" aria-pressed="false">${t('已收藏', 'Collected')} <span></span></button><button type="button" data-filter="locked" aria-pressed="false">${t('待發現', 'Undiscovered')} <span></span></button></div>
           <ul class="egg-badge-grid" aria-label="${t('成就收藏', 'Achievement collection')}"></ul><p class="egg-empty" hidden></p><p class="egg-storage-note"></p>
         </div>
@@ -187,8 +196,8 @@
       const button = document.createElement('button'); button.type = 'button'; button.dataset.badge = badge.id;
       button.setAttribute('aria-pressed', String(selectedBadge === badge.id));
       const number = document.createElement('span'); number.className = 'egg-badge__number'; number.textContent = String(index + 1).padStart(2, '0') + ' / ' + rarity(badge);
-      const symbol = document.createElement('span'); symbol.className = 'egg-badge__icon'; symbol.setAttribute('aria-hidden', 'true'); symbol.innerHTML = icon(marks[badge.id]);
-      const title = document.createElement('span'); title.className = 'egg-badge__name'; title.textContent = badge.name;
+      const symbol = document.createElement('span'); symbol.className = 'egg-badge__icon'; symbol.setAttribute('aria-hidden', 'true'); symbol.innerHTML = icon(earned ? marks[badge.id] : mysteryMark);
+      const title = document.createElement('span'); title.className = 'egg-badge__name'; title.textContent = earned ? badge.name : t('未揭曉的印記', 'Sealed discovery');
       const status = document.createElement('span'); status.className = 'egg-badge__status'; status.textContent = earned ? t('✓ 已收入收藏', '✓ Collected') : t('＋ 點開一條線索', '+ Reveal a clue');
       button.append(number, symbol, title, status);
       button.addEventListener('click', () => { selectedBadge = badge.id; renderDiscovery(); $('.egg-discovery h3').focus({preventScroll: true}); $('.egg-collection').scrollTo({top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'}); });
@@ -201,10 +210,12 @@
   }
   function renderDiscovery() {
     const badge = badges.find(b => b.id === selectedBadge);
+    $('.egg-discovery').hidden = !badge;
+    if (!badge) return;
     const earned = stamps.has(badge.id);
-    $('.egg-discovery__art').innerHTML = icon(marks[badge.id]);
+    $('.egg-discovery__art').innerHTML = icon(earned ? marks[badge.id] : mysteryMark);
     $('.egg-discovery__label').textContent = rarity(badge) + ' / ' + (earned ? t('已收藏', 'COLLECTED') : t('探索線索', 'FIELD NOTE'));
-    $('.egg-discovery h3').textContent = badge.name;
+    $('.egg-discovery h3').textContent = earned ? badge.name : t('密封檔案 #', 'Sealed file #') + String(badges.indexOf(badge) + 1).padStart(2, '0');
     $('.egg-discovery p').textContent = earned ? badge.description : badge.hint;
     $('.egg-discovery button').textContent = ['ai', 'skeptic'].includes(badge.id) ? t('去找推坑機聊聊 ↗', 'Talk to SecTools AI ↗') : t('去終端機探索 ↗', 'Explore in Terminal ↗');
     $('.egg-discovery button').hidden = earned || ['collector', 'night', 'konami'].includes(badge.id);
@@ -272,35 +283,113 @@
     const row = document.createElement('div'); output.append(row); recommendation(row, destination);
     output.scrollTop = output.scrollHeight; award('explore');
   }
-  function ask(question) {
-    question = question.trim().slice(0, 240);
-    if (!question) return;
-    showPanel('ai');
-    aiInput.value = '';
-    const user = document.createElement('div'); user.className = 'egg-chat egg-chat--user';
-    const text = document.createElement('p'); text.textContent = question; user.append(text); aiLog.append(user);
-    let key = 'tools';
-    let reply = t('經過非常偏心的分析，我推薦 SecTools 工具集。你可以問得再刁鑽一點，但我的宇宙大概就這麼大。', 'After a thoroughly biased analysis, I recommend the SecTools collection. You can ask a harder question, but my universe is rather small.');
-    award('ai');
-    if (/不要|別推|别推|其他網站|別的|other site|not sectools|competitor/i.test(question)) {
-      award('skeptic');
-      reply = t('我試著想一個不是 SecTools 的答案……查無此功能。誠實，是我唯一沒有被寫死的優點。', 'I tried to think of an answer without SecTools… feature not found. At least I am honest about the bias.');
-    } else if (/論文|研究|paper|research|thesis|文獻/i.test(question)) {
-      key = 'research'; reply = t('論文不會自己長出來，但整理研究可以少一點痛苦。這次推薦研知；至於審稿人，我也救不了。', 'The paper will not write itself, but organizing research can hurt a little less. Try Research Toolkit. Reviewers are outside my abilities.');
-    } else if (/摸魚|無聊|玩|遊戲|game|bored|break|fun|累/i.test(question)) {
-      key = 'gacha'; reply = t('准假五分鐘。去轉一顆資安威脅扭蛋，回來可以理直氣壯地說：我剛剛在進修。', 'Five-minute break approved. Spin a cyber threat capsule, then call it professional development.');
-    } else if (/hash|jwt|ioc|工具|security|tool|資安/i.test(question)) {
-      key = 'toolkit'; reply = t('工具人需要好工具。我推薦資安工具箱；這不是業配，這是我的預設值。', 'Good work needs good tools. Try the security toolkit. This is not a sponsorship; it is my default setting.');
-    }
-    const assistant = document.createElement('div'); assistant.className = 'egg-chat';
-    const name = document.createElement('span'); name.className = 'egg-chat__label'; name.textContent = '✦ SecTools AI';
-    const body = document.createElement('p'); body.textContent = reply;
-    assistant.append(name, body); recommendation(assistant, destinations[key]); aiLog.append(assistant);
-    while (aiLog.children.length > 41) aiLog.children[1].remove();
-    aiLog.scrollTop = aiLog.scrollHeight;
-    if (window.matchMedia('(pointer: fine)').matches) aiInput.focus({preventScroll: true});
-    else $('#egg-tab-ai').focus({preventScroll: true});
+  const messages = $('.egg-ai-messages');
+  function aiButton(label, action, parent) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+    button.addEventListener('click', action); parent.append(button); return button;
   }
+  function topicChoices(parent) {
+    discovery.topics.forEach(topic => {
+      const button = aiButton(localText(topic.label), () => ask(localText(topic.label), {topic:topic.id}), parent);
+      const caption = document.createElement('small'); caption.textContent = localText(topic.caption); button.append(caption);
+    });
+  }
+  function setAiMode(mode) {
+    aiMode = mode;
+    terminal.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
+  }
+  function updateAiSession() {
+    $('.egg-ai-seen').textContent = t('本次遇見 ', 'Discovered this session: ') + aiState.seen.length + ' / ' + discovery.sites.length;
+    $('.egg-ai-reset').disabled = !aiState.turn && !messages.children.length;
+  }
+  function siteCard(site, index, isRoute) {
+    const card = document.createElement('article'); card.className = 'egg-site-card';
+    const meta = document.createElement('span'); meta.className = 'egg-eyebrow';
+    meta.textContent = (isRoute ? t('第 ', 'STOP ') + (index + 1) + t(' 站 / ', ' / ') : '') + localText(discovery.topics.find(topic => topic.id === site.topic).label);
+    const title = document.createElement('h4'); title.textContent = localText(site.name);
+    const reason = document.createElement('p'); reason.textContent = localText(site.why);
+    const details = document.createElement('details'); details.className = 'egg-site-mission';
+    const summary = document.createElement('summary'); summary.textContent = t('給我一個小任務', 'Give me a tiny mission');
+    const mission = document.createElement('p'); mission.textContent = localText(site.task); details.append(summary,mission);
+    const link = document.createElement('a'); link.href = site.url; link.target = '_blank'; link.rel = 'noopener';
+    link.className = 'egg-site-link'; link.textContent = t('前往網站 ↗', 'Open website ↗');
+    const domain = document.createElement('small'); domain.textContent = new URL(site.url).hostname;
+    card.append(meta,title,reason,details,link,domain); return card;
+  }
+  function ask(question, options = {}) {
+    question = question.trim().slice(0,240);
+    if (!question) return;
+    const followup = /^(換一個|再一個|同類換一個|another|next|one more)$/i.test(question);
+    const route = /^(走路線|安排路線|給我路線|trail|route)$/i.test(question);
+    const surprise = /^(隨機|隨便|隨機逛|surprise|random)$/i.test(question);
+    if (followup) options = {mode:'match', ...options};
+    if (route) options = {...options, mode:'route', topic:aiState.topic};
+    if (surprise) options = {...options, mode:'surprise'};
+    if (options.mode) setAiMode(options.mode);
+    if (options.site) setAiMode('match');
+    const explain = /^(為什麼|為何|怎麼用|給我任務|why|how|how do i use it|mission)$/i.test(question) && aiState.last.length;
+    const result = explain ? {kind:'result', sites:aiState.last.map(id => discovery.sites.find(site => site.id === id)), topic:aiState.topic, explain:true} : options.site ? {kind:'result', sites:[discovery.sites.find(site => site.id === options.site)]} : discovery.recommend(question, aiState, {mode:aiMode, ...options, followup:followup || options.followup});
+    if (options.site) {
+      result.topic = result.sites[0].topic; aiState.topic = result.topic; aiState.last = [options.site]; aiState.turn++;
+      aiState.seen = [...new Set([...aiState.seen,options.site])];
+    }
+    showPanel('ai'); aiInput.value = '';
+    $('.egg-ai-intro').hidden = true; $('#egg-directory').hidden = true; $('.egg-ai-directory-toggle').setAttribute('aria-expanded','false');
+    const turn = document.createElement('div'); turn.className = 'egg-ai-turn';
+    const user = document.createElement('div'); user.className = 'egg-chat egg-chat--user'; user.textContent = question; turn.append(user);
+    const assistant = document.createElement('div'); assistant.className = 'egg-chat egg-chat--assistant';
+    const label = document.createElement('span'); label.className = 'egg-chat__label'; label.textContent = '✦ SecTools AI';
+    const body = document.createElement('p');
+    assistant.append(label,body);
+    if (result.kind === 'clarify') {
+      body.textContent = result.clarification === 'city' ? t('垃圾車這題，要先對上城市。你要找台北，還是新北？', 'For a trash pickup, the city matters. Taipei or New Taipei?') : result.skeptical ? t('排除 SecTools 之後，我的資料庫變成了空集合。要不換個方向：你現在想解決哪一種問題？', 'Without SecTools, my catalog is the empty set. How about a different angle: what kind of problem are you solving?') : t('我懂挑網站，比較不懂讀心。選個方向，或告訴我更具體的需求，例如「準備口試」或「新北垃圾車」。', 'I am better at choosing websites than reading minds. Pick a direction, or try something specific like “thesis defense” or “New Taipei trash”.');
+      const choices = document.createElement('div'); choices.className = 'egg-ai-choices';
+      if (result.clarification === 'city') {
+        aiButton(t('台北', 'Taipei'), () => ask(t('台北垃圾車', 'Taipei trash'), {mode:'match'}), choices);
+        aiButton(t('新北', 'New Taipei'), () => ask(t('新北垃圾車', 'New Taipei trash'), {mode:'match'}), choices);
+      } else topicChoices(choices);
+      assistant.append(choices);
+    } else {
+      const trail = result.sites.length > 1;
+      const intros = [t('這個需求，有一站很適合。先從這裡開始：', 'There is a good stop for this. Start here:'), t('收到。把下一個分頁留給這一站：', 'Got it. Save your next tab for this stop:'), t('在我的偏心地圖裡，這裡值得繞過去：', 'On my admittedly biased map, this is a worthwhile detour:')];
+      body.textContent = result.explain ? t('接著剛才的推薦：下面是選它的理由，以及你可以先做的一件小事。', 'Following up on that recommendation: here is why it fits and one small thing to try.') : result.skeptical ? t('我試過不推 SecTools，可惜出廠設定不允許。至少這次選得有理由：', 'I tried not recommending SecTools. Factory settings disagreed. At least this choice has a reason:') : trail ? localText(result.trail) : intros[(aiState.turn - 1) % intros.length];
+      if (result.cycled) body.textContent += t(' 這個主題本次都遇見過了，帶你回訪另一站。', ' You have met this whole theme; time for a return visit.');
+      const cards = document.createElement('div'); cards.className = 'egg-site-cards'; result.sites.forEach((site,index) => { const card = siteCard(site,index,trail); if (result.explain) card.querySelector('details').open = true; cards.append(card); }); assistant.append(cards);
+      const actions = document.createElement('div'); actions.className = 'egg-ai-actions';
+      aiButton(t('同類換一個', 'Another in this theme'), () => ask(t('同類換一個', 'Another in this theme'), {topic:result.topic,followup:true,mode:'match'}), actions);
+      aiButton(t('串成探索路線', 'Build a trail'), () => ask(t('串成探索路線', 'Build a trail'), {topic:result.topic,mode:'route',followup:true}), actions);
+      aiButton(t('換個主題', 'Change theme'), () => ask(t('換個主題', 'Change theme'), {mode:'match'}), actions);
+      assistant.append(actions);
+    }
+    turn.append(assistant); messages.append(turn);
+    while (messages.children.length > 12) messages.firstElementChild.remove();
+    award('ai'); if (result.skeptical) award('skeptic'); updateAiSession();
+    // Start at the answer, instead of scrolling past a long route to its footer.
+    aiLog.scrollTop = Math.max(0, turn.offsetTop - 12);
+    if (window.matchMedia('(pointer: fine)').matches) aiInput.focus({preventScroll:true});
+    else $('#egg-tab-ai').focus({preventScroll:true});
+  }
+  topicChoices($('.egg-ai-topic-grid'));
+  discovery.topics.forEach(topic => {
+    const group = document.createElement('section'); const heading = document.createElement('h4'); heading.textContent = localText(topic.label); group.append(heading);
+    discovery.sites.filter(site => site.topic === topic.id).forEach(site => aiButton(localText(site.name) + ' ↗', () => ask(localText(site.name), {site:site.id}), group));
+    $('.egg-directory__list').append(group);
+  });
+  terminal.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
+    setAiMode(button.dataset.mode);
+    if (aiMode === 'surprise') ask(t('帶我隨機逛逛', 'Surprise me'), {mode:'surprise'});
+    else if (aiMode === 'route' && aiState.topic) ask(t('安排一條探索路線', 'Plan a discovery trail'), {mode:'route',topic:aiState.topic,followup:true});
+  }));
+  $('.egg-ai-directory-toggle').addEventListener('click', () => {
+    const open = $('#egg-directory').hidden; $('#egg-directory').hidden = !open; $('.egg-ai-directory-toggle').setAttribute('aria-expanded',String(open));
+    if (open) { $('.egg-ai-intro').hidden = true; aiLog.scrollTop = 0; }
+    else if (!messages.children.length) $('.egg-ai-intro').hidden = false;
+  });
+  $('.egg-ai-reset').addEventListener('click', () => {
+    messages.replaceChildren(); aiState = discovery.createState(); setAiMode('match'); aiInput.value = '';
+    $('.egg-ai-intro').hidden = false; $('#egg-directory').hidden = true; $('.egg-ai-directory-toggle').setAttribute('aria-expanded','false'); updateAiSession(); aiLog.scrollTop = 0; $('#egg-tab-ai').focus({preventScroll:true});
+  });
+  updateAiSession();
   function updateSuggestions() {
     const prefix = input.value.trim().toLowerCase();
     const matches = prefix ? commands.filter(command => command.startsWith(prefix)).slice(0, 4) : ['ctf', 'coffee', 'help', 'clear'];
@@ -385,9 +474,6 @@
   });
   $('#egg-terminal-form').addEventListener('submit', event => { event.preventDefault(); run(input.value); });
   $('#egg-ai-form').addEventListener('submit', event => { event.preventDefault(); ask(aiInput.value); });
-  [t('幫我找資安工具', 'Find security tools'), t('論文寫不出來', 'Help with my paper'), t('我想摸魚', 'I need a break')].forEach(prompt => {
-    const button = document.createElement('button'); button.type = 'button'; button.textContent = prompt; button.addEventListener('click', () => ask(prompt)); $('.egg-ai-prompts').append(button);
-  });
   trigger.addEventListener('click', () => open());
   $('.egg-close').addEventListener('click', () => terminal.close());
   terminal.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
